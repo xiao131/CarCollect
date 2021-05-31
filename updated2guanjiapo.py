@@ -286,6 +286,11 @@ def main():
         return
     # 流式分块取JSON 防止爆内存
     json_path_list = ['./data/360che_ershoucar.json','./data/360che_newcar.json']
+    try:
+        have_updated = load_obj('guanjiapo_have_updated')
+    except:
+        have_updated = set()
+    count = 1
     for json_path in json_path_list:
         with open(json_path, 'r', encoding='utf-8') as f:
             objects = ijson.items(f, 'item')
@@ -293,6 +298,9 @@ def main():
             while True:
                 try:
                     car = objects.__next__()
+                    if car['url'] in have_updated:
+                        continue
+
                     if '360che_ershoucar' in json_path:
                         car['datasource'] = '360-二手车'
                         car['classid'] = '1017'
@@ -310,11 +318,16 @@ def main():
                         car['label'] = car['datasource'] + '-' + car['品牌']
                     except:
                         continue
-
                     PostToGuanjiapo(car,token, esn )
+
+                    have_updated.add(car['url'])
+                    if count%50 == 0:
+                        save_obj(have_updated,'guanjiapo_have_updated')
+                    count += 1
                 except StopIteration as e:
                     print("数据读取完成")
                     break
+    save_obj(have_updated, 'guanjiapo_have_updated')
 
 if __name__ == "__main__":
     main()

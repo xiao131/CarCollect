@@ -105,7 +105,10 @@ def get_Newcar_Detail(car_list):
     return car_list
 
 def get_Ershou_Url(region,page_end = 1,page_strat = 1):
-    region_url = 'https://tao.360che.com/'+region+'/{}.html'
+
+    region_url = 'https://tao.360che.com/'
+    if region != '000':  # '000' 代表全国
+        region_url += region+'/{}.html'
     print('当前爬取：' + region_url)
     ershou_car_list = []
     for i in tqdm(range(page_strat,page_end+1),desc="获取所有二手车链接",ncols=100):
@@ -191,21 +194,38 @@ def get_City():
         name = city.find('a').get_text().replace(' ','').replace('\n','')
         code = city.find('a')['data-pinyin']
         city_code[name] = code
-
+    city_code['全国'] = '000'
     return city_code
 
 def Collect(city):
     # 得到所有城市code  {'成都':code,...}
     city_code = get_City()
-    all_pingpai_set = set()
-    before_i = 1
+
+
     start_page = 1
     end_page = 500
-    for i in tqdm(range(1, 500, 10), desc='总页数', ncols=100):
+    try:
+        with open('config.json','r',encoding = 'utf-8') as f:
+            config = json.load(f)
+        start_page = int(config['car360']['start_page'])
+        end_page = int(config['car360']['end_page'])
+        gap = int(config['car360']['gap'])
+    except:
+        config = {'car360':{'start_page':1,'end_page':50,'gap':10},'car13':{'start_page':1,'end_page':50,'gap':10}}
+        with open('config.json', 'w+', encoding='utf-8') as f:
+            f.write(json.dumps(test_dict,indent = 4))
+        start_page = int(config['car360']['start_page'])
+        end_page = int(config['car360']['end_page'])
+        gap = int(config['car360']['gap'])
+        print('配置文件config.json不存在或配置错误，已初始化。。')
+
+    print('此次爬取页数区间为：{}-{}页，每间隔{}页保存一次信息。'.format(start_page,end_page,gap))
+    before_i = start_page
+    for i in tqdm(range(start_page, end_page, gap), desc='总页数', ncols=100):
         try:
             all_pingpai_set = load_obj('pingpai_set')
         except:
-            pass
+            all_pingpai_set = set()
         ershouche_list = get_Ershou_Url(city_code[city], page_strat=before_i, page_end=i)
         ershouche_list = get_Ershou_Detail(ershouche_list)
 
