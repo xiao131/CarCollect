@@ -4,7 +4,8 @@ import re
 import base64
 from fontTools.ttLib import TTFont
 import time
-import tqdm
+from tqdm import tqdm
+import json
 
 #获取Html
 def GetHtmlCode(url,Cookie,try_num=0):
@@ -73,10 +74,14 @@ def Collect():
     url_truck = "https://quanguo.58.com/huochec/pn1/?PGTID=0d30001d-0221-8a2d-e3c0-00094d974a53&ClickID=54&template=new"
     url_trailer = "https://quanguo.58.com/guache/pn1/?PGTID=0d30001d-0221-8a2d-e3c0-00094d974a53&ClickID=71"
 
+    car_list = []
+    car_path = './data/13che_ershoucar.json'
+    save_num = 0 #保存计数
     for url_num in range(3):
         # 判断是否爬完
         for page in tqdm(range(1, 1000)):
             print("页数：", page)
+            save_num += 1
 
             # 请求数据
             url_engineer_car = "https://quanguo.58.com/cheliangmaimai/pn" + str(
@@ -107,6 +112,9 @@ def Collect():
             if len(car_links) == 0:
                 break
             for car_link in car_links:
+                #单条车信息
+                car_single = {}
+
                 car_link = car_link.find("a", target="_blank")
                 print(car_link["href"])
                 url_info = car_link["href"]
@@ -115,7 +123,7 @@ def Collect():
                 data_html = GetHtmlCode(url_info, Cookie)
                 if "请输入验证码" in data_html:
                     print("访问频繁，需要输入验证码")
-                    time.sleep(120)
+                    time.sleep(300)
                     data_html = GetHtmlCode(url_info, Cookie)
                 if data_html == None:
                     continue
@@ -165,15 +173,6 @@ def Collect():
                 desc = desc.replace(" ", "")
                 print("描述：", desc)
 
-                car_info = {}
-                car_info_html = data_html.find("dl", class_="info-conf")
-                car_info_html = car_info_html.find_all("dd")
-                for c in car_info_html:
-                    label = c.find("span", class_="info-conf_label").text
-                    value = c.find("span", class_="info-conf_value").text
-                    car_info[label] = value
-                print("车信息：", car_info)
-
                 # 图片列表
                 img_list = []
                 imgs = data_html.find("div", class_="info-pics h-clearfix")
@@ -184,9 +183,43 @@ def Collect():
                     img_list.append(img_url)
                 print("图片列表：", img_list)
 
+                car_single["url"] = url_info
+                car_single["name"] = title
+                car_single["info"] = desc
+                car_single["price"] = price
+                car_single["image"] = img_list
+                car_single["品牌"] = brand
+
+                car_info = {}
+                car_info_html = data_html.find("dl", class_="info-conf")
+                car_info_html = car_info_html.find_all("dd")
+                for c in car_info_html:
+                    label = c.find("span", class_="info-conf_label").text
+                    value = c.find("span", class_="info-conf_value").text
+                    car_info[label] = value
+                    car_single[label] = value
+                print("车信息：", car_info)
+
+                car_list.append(car_single)
+
                 time.sleep(10)
-                break
-            break
+
+            #每10页保存一次
+            if save_num % 10 == 0:
+                with open(car_path, 'a+', encoding='utf-8') as f:
+                    f.write(json.dumps(car_list, indent=4, ensure_ascii=False))
+                print("保存信息至：", car_path)
+                del car_list
+                save_num = 0
+
+            time.sleep(30)
+
+    if save_num != 0:
+        with open(car_path, 'a+', encoding='utf-8') as f:
+            f.write(json.dumps(car_list, indent=4, ensure_ascii=False))
+        print("保存信息至：", car_path)
+        del car_list
 
 if __name__ == '__main__':
+    # Collect()
     pass

@@ -15,6 +15,7 @@ from selenium.webdriver.chrome.options import Options
 from time import sleep
 import car58
 import car360
+from updated2wego import PostMain as WegoPost
 
 #采集数据线程
 class CollectThread(Thread):
@@ -29,7 +30,6 @@ class CollectThread(Thread):
 
     def run(self):
         #线程执行的代码
-
         if self.select == 0:
             #采集所有
             car360.Collect()
@@ -80,141 +80,29 @@ class UpdatePriceThread(Thread):
                     Data_List[i]["sku_list"][j]["goods_price"] = price_temp
         wx.CallAfter(pub.sendMessage, "update", msg="accept_price")
 
-#修改库存线程
-class UpdateStockThread(Thread):
-    def __init__(self):
-        #线程实例化时立即启动
-        Thread.__init__(self)
-        #主线程关闭
-        self.setDaemon(True)
-        self.start()
-    def run(self):
-        #线程执行的代码
-        global Goods_Stock
-        global Data_List
-        data_num = len(Data_List)
-
-        for i in range(data_num):
-            sku_list = Data_List[i]["sku_list"]
-            sku_num = len(sku_list)
-            for j in range(sku_num):
-                Data_List[i]["sku_list"][j]["goods_stock"] = Goods_Stock
-
-        wx.CallAfter(pub.sendMessage, "update", msg="accept_stock")
-
-def WriteXls(sheet, data, row_count):
-    # write(行，列，值)
-    for i, dat in enumerate(data):
-        if type(dat) == list:
-            dat = ';'.join(dat)
-        sheet.write(row_count, i, dat)
-
-# 写文件
-def WriteToXls(data_list,file_path):
-    save_file = Workbook()
-    sheet1 = save_file.add_sheet('报价表', cell_overwrite_ok=True)
-    WriteXls(sheet1, ["数据源", "分类", "商品名称", "规格", "价格","库存","简介","图片列表","大约单价"],0)
-    # if Path("./data").exists() == False:
-    #     makedirs("./data")
-    # time_today = datetime.datetime.now().strftime('%Y-%m-%d')
-    save_file.save(file_path)
-    row_num = 1
-    for goods in data_list:
-        for sku in goods['sku_list']:
-            WriteXls(sheet1, [goods['data_from'], goods['cat_name'], goods['goods_name'], sku['goods_title'],
-                              sku['goods_price'],sku['goods_stock'],goods['remark'],goods['goods_img'],sku['unit_price']],row_num)
-            row_num += 1
-    save_file.save(file_path)
-    print('success001: 写入报价表文件成功！')
-
-#导出文件线程
-class SaveFileThread(Thread):
-    def __init__(self):
-        #线程实例化时立即启动
-        Thread.__init__(self)
-        #主线程关闭
-        self.setDaemon(True)
-        self.start()
-    def run(self):
-        #线程执行的代码
-        global Data_List
-        global Save_File_Path
-        WriteToXls(Data_List,Save_File_Path)
-        wx.CallAfter(pub.sendMessage, "update", msg="accept_save")
-
-#打开xls文件，并返回Data_List
-def OpenXls(file_path):
-    df = pd.read_excel(file_path)
-    df_num = len(df)
-    print("导入数据总量：",df_num)
-    data_list = []
-    global ALL_CAT
-    # ALL_CAT = set()
-    ALL_CAT.clear()
-    before_name = ''
-    data_single = {}
-    for i in range(df_num):
-        if before_name == df.loc[i]["商品名称"]:
-            sku = {}
-            sku["goods_title"] = str(df.loc[i]["规格"])
-            sku["goods_price"] = str(df.loc[i]["价格"])
-            sku["goods_stock"] = str(df.loc[i]["库存"])
-            sku["unit_price"] = str(df.loc[i]["大约单价"])
-            data_single["sku_list"].append(sku)
-        else:
-            if len(data_single)>0:
-                data_list.append(data_single)
-            data_single = {}
-            data_single["data_from"] = df.loc[i]["数据源"]
-            data_single["goods_name"] = df.loc[i]["商品名称"]
-            data_single["cat_name"] = df.loc[i]["分类"]
-            data_single['remark'] = df.loc[i]["简介"]
-            data_single['goods_img'] = str(df.loc[i]["图片列表"]).split(";")
-            if data_single["data_from"] not in ALL_CAT.keys():
-                ALL_CAT[data_single["data_from"]] = set()
-            ALL_CAT[data_single["data_from"]].add(data_single["cat_name"])
-            data_single["sku_list"] = []
-            before_name = data_single["goods_name"]
-            sku = {}
-            sku["goods_title"] = str(df.loc[i]["规格"])
-            sku["goods_price"] = str(df.loc[i]["价格"])
-            sku["goods_stock"] = str(df.loc[i]["库存"])
-            sku["unit_price"] = str(df.loc[i]["大约单价"])
-            data_single["sku_list"].append(sku)
-
-
-    data_list.append(data_single)
-
-        # print(data_single)
-    return data_list
-
-#导入文件线程
-class OpenFileThread(Thread):
-    def __init__(self):
-        #线程实例化时立即启动
-        Thread.__init__(self)
-        #主线程关闭
-        self.setDaemon(True)
-        self.start()
-    def run(self):
-        #线程执行的代码
-        global Open_File_Path
-        global Data_List
-        #打开文件函数
-        # WriteToXls(Data_List,Save_File_Path)
-        Data_List = OpenXls(Open_File_Path)
-        wx.CallAfter(pub.sendMessage, "update", msg="accept_open")
-
 #上传数据线程
 class UpDataThread(Thread):
-    def __init__(self):
+    def __init__(self,select_num):
         #线程实例化时立即启动
         Thread.__init__(self)
         #主线程关闭
+        self.select = select_num
         self.setDaemon(True)
         self.start()
     def run(self):
         #线程执行的代码
+        if self.select == 0:
+            #上传所有
+            car360.Collect()
+            car58.Collect()
+
+        elif self.select == 1:
+            #上传卡车之家
+            car360.Collect()
+
+        elif self.select == 2:
+            #上传58同城
+            car58.Collect()
         #上传数据函数
         global Data_List
         global Tag2Id
@@ -355,10 +243,10 @@ class Car(wx.Frame):
         self.Centre(wx.BOTH)
 
         self.m_button3.Bind(wx.EVT_BUTTON, self.Collect)
-        self.m_button4.Bind(wx.EVT_BUTTON, self.OnOpenFile)
-        self.m_button5.Bind(wx.EVT_BUTTON, self.SaveFile)
+        self.m_button4.Bind(wx.EVT_BUTTON, self.UpdatePrice)
+        self.m_button5.Bind(wx.EVT_BUTTON, self.GetImage)
         self.m_button6.Bind(wx.EVT_BUTTON, self.UpData)
-        self.m_button7.Bind(wx.EVT_BUTTON, self.UpData_Youzan)
+        self.m_button7.Bind(wx.EVT_BUTTON, self.UpData_Guanjiapo)
 
         pub.subscribe(self.updateDisplay, "update")
 
@@ -425,6 +313,8 @@ class Car(wx.Frame):
         self.ColseAllButton()
 
     def UpdatePrice(self,event):
+        wx.MessageBox("当前功能正在测试中", "提示消息", wx.OK | wx.YES_DEFAULT)
+        return
         #获取价格，判断是否为空
         global Goods_Price
         Goods_Price = self.m_textCtrl1.GetValue()
@@ -437,82 +327,39 @@ class Car(wx.Frame):
         # 将按钮设置为禁用
         self.ColseAllButton()
 
-    def UpdateStock(self,event):
-        #获取库存，判断是否为空
-        global Goods_Stock
-        Goods_Stock = self.m_textCtrl2.GetValue()
-        if Goods_Stock == "":
-            wx.MessageBox("请先输入库存数量", "提示消息", wx.OK | wx.YES_DEFAULT)
-            return
-        print("修改库存数量：", Goods_Stock)
+    def GetImage(self,event):
+        wx.MessageBox("生成配置图，当前功能正在测试中", "提示消息", wx.OK | wx.YES_DEFAULT)
+        return
+        #生成配置图线程
 
-        UpdateStockThread()
-        # 将按钮设置为禁用
-        self.ColseAllButton()
-
-    # 导入文件
-    def OnOpenFile(self, event):
-        cur_path = getcwd()
-        # 根据单选的索引执行
-        filesFilter = "xls Files (*.xls)|*.xls|" "All files (*.*)|*.*"
-        # 选择文件对话框，设置选择的文件必须为xls格式
-        self.dlg = wx.FileDialog(self, message=u"选择文件", style=wx.FD_OPEN | wx.FD_CHANGE_DIR,
-                                 wildcard=filesFilter)
-        # 如果确定了选择的文件，将文件路径写到text1控件
-        if self.dlg.ShowModal() == wx.ID_OK:
-            global Open_File_Path
-            Open_File_Path = self.dlg.GetPath()
-            #导入文件函数
-            OpenFileThread()
-            #关闭按钮
-            self.ColseAllButton()
-        else:
-            print("error001: 导入文件错误！")
-        chdir(cur_path)
-
-    #导出 保存文件
-    def SaveFile(self, event):
-        cur_path = getcwd()
-        if self.m_grid1.GetNumberRows() == 0:
-            wx.MessageBox("当前列表为空，请先采集再进行保存", "提示消息", wx.OK | wx.YES_DEFAULT)
-            return
-        filesFilter = "Xls Files (*.xls)|*.xls|" "All files (*.*)|*.*"
-        fileDialog = wx.FileDialog(self, message="保存文件", wildcard=filesFilter, style=wx.FD_SAVE)
-        dialogResult = fileDialog.ShowModal()
-        if dialogResult != wx.ID_OK:
-            print("error002: 导出文件错误！")
-            return
-        chdir(cur_path)
-        global Save_File_Path
-        Save_File_Path = fileDialog.GetPath()
-        print("保存文件路径：", Save_File_Path)
-        # 多线程
-        # 保存数据函数
-        SaveFileThread()
         # 将按钮设置为禁用
         self.ColseAllButton()
 
     #上传数据，到微商相册
     def UpData(self,event):
-        # wx.MessageBox("上传Cookie未更新", "提示消息", wx.OK | wx.YES_DEFAULT)
-        # return
-        global Mc_Account
+        # 多线程
+        #获取上传数据的类别
+        select_str = self.m_choice1.GetStringSelection()
+        select_num = 0
+        if select_str == "采集全部":
+            select_num = 0
+        elif select_str == "卡车之家":
+            select_num = 1
+        elif select_str == "58同城":
+            select_num = 2
+
         global Wego_Account
-        mc_select = self.m_choice2.GetStringSelection()
-        # "美菜18620241959", "美菜13378465583"
-        if mc_select == "美菜18620241959":
-            Mc_Account = "18620241959"
-        elif mc_select == "美菜13378465583":
-            Mc_Account = "13378465583"
         wogo_select = self.m_choice3.GetStringSelection()
         Wego_Account = wogo_select[5:]
-        #获取价格，判断是否为空
-        UpDataThread()
+
+        #上传
+        UpDataThread(select_num)
         # 将按钮设置为禁用
         self.ColseAllButton()
 
-    # 上传数据，到有赞微商城
-    def UpData_Youzan(self, event):
+    # 上传数据，到管家婆
+    def UpData_Guanjiapo(self, event):
+
         # wx.MessageBox("上传Cookie未更新", "提示消息", wx.OK | wx.YES_DEFAULT)
         # return
         global Mc_Account

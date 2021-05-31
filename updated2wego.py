@@ -286,10 +286,9 @@ def PostToWego(goods,tag2id):
     # print(r.text)
     print('上传商品成功：',goods['name'])
 
-
-if __name__ == "__main__":
+def PostMain(json_path_list = ['./data/360che_ershoucar.json','./data/13che_ershoucar.json']):
     # 流式分块取JSON 防止爆内存
-    json_path_list = ['./data/360che_ershoucar.json']
+    # json_path_list = ['./data/360che_ershoucar.json']
     try:
         have_updated = load_obj('wego_have_updated')
     except:
@@ -329,3 +328,6 @@ if __name__ == "__main__":
                     print("数据读取完成")
                     break
     save_obj(have_updated, 'wego_have_updated')
+
+if __name__ == "__main__":
+    pass
