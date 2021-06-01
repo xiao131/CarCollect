@@ -65,7 +65,71 @@ def getNumber(g,convert_dict):
     number = int(convert_dict[key][-2:]) - 1  # glyph00009代表数字8， glyph00008代表数字7，依次类推
     return str(number)
 
-def Collect():
+def single_get_first(unicode1):
+    str1 = unicode1.encode('gbk')
+    try:
+        ord(str1)
+        return str1
+    except:
+        asc = str1[0] * 256 + str1[1] - 65536
+        if asc >= -20319 and asc <= -20284:
+            return 'a'
+        if asc >= -20283 and asc <= -19776:
+            return 'b'
+        if asc >= -19775 and asc <= -19219:
+            return 'c'
+        if asc >= -19218 and asc <= -18711:
+            return 'd'
+        if asc >= -18710 and asc <= -18527:
+            return 'e'
+        if asc >= -18526 and asc <= -18240:
+            return 'f'
+        if asc >= -18239 and asc <= -17923:
+            return 'g'
+        if asc >= -17922 and asc <= -17418:
+            return 'h'
+        if asc >= -17417 and asc <= -16475:
+            return 'j'
+        if asc >= -16474 and asc <= -16213:
+            return 'k'
+        if asc >= -16212 and asc <= -15641:
+            return 'l'
+        if asc >= -15640 and asc <= -15166:
+            return 'm'
+        if asc >= -15165 and asc <= -14923:
+            return 'n'
+        if asc >= -14922 and asc <= -14915:
+            return 'o'
+        if asc >= -14914 and asc <= -14631:
+            return 'p'
+        if asc >= -14630 and asc <= -14150:
+            return 'q'
+        if asc >= -14149 and asc <= -14091:
+            return 'r'
+        if asc >= -14090 and asc <= -13119:
+            return 's'
+        if asc >= -13118 and asc <= -12839:
+            return 't'
+        if asc >= -12838 and asc <= -12557:
+            return 'w'
+        if asc >= -12556 and asc <= -11848:
+            return 'x'
+        if asc >= -11847 and asc <= -11056:
+            return 'y'
+        if asc >= -11055 and asc <= -10247:
+            return 'z'
+        return ''
+
+def getPinyin(string):
+    if string == None:
+        return None
+    lst = list(string)
+    charLst = []
+    for l in lst:
+        charLst.append(single_get_first(l))
+    return ''.join(charLst)
+
+def Collect(city):
     # 58同城 二手车
     Cookie = 'f=n; commontopbar_new_city_info=8728%7C%E5%85%A8%E5%9B%BD%7Cquanguo; f=n; commontopbar_new_city_info=8728%7C%E5%85%A8%E5%9B%BD%7Cquanguo; commontopbar_ipcity=wx%7C%E6%97%A0%E9%94%A1%7C0; time_create=1624258576157; userid360_xml=1C6F7C345E3BF67FEACA7781B6403670; fzq_h=b7ce8b1d7996bf6f4ba538769e61c338_1621665244296_42fc8daac9b34a4b9d86962a5c4e44bc_826441976; sessionid=60893154-450a-4238-8c3c-7a8a96ac35df; id58=c5/nfGCopdwHv6MSL2U7Ag==; 58tj_uuid=d86b5da3-47de-44cf-8d2c-35bacd80a043; wmda_uuid=63d09f4faf599c46f69f7f4dda571ac2; wmda_new_uuid=1; als=0; f=n; gr_user_id=0bfe92c5-5988-4a62-8f77-27a732c42e83; wmda_visited_projects=%3B1732038237441%3B11187958619315; xxzl_deviceid=jpM3DraNrxoxJPMSRi9Qr%2B6wCtJrxpcGj4%2BJ0AqLZqbw%2BTOHPaWowsG%2FVjOIscz6; wmda_session_id_1732038237441=1621687253811-8fe8cedb-763f-d82a; new_uv=4; utm_source=; spm=; init_refer=https%253A%252F%252Fquanguo.58.com%252Fershouche%252F; new_session=0; 58home=wx; city=wx; xxzl_cid=4aa405d2705148d48f0768b73ade5fb4; xzuid=16995c85-c03e-4e53-acd8-4bfdebf62ce4; wmda_session_id_11187958619315=1621688608289-d998f213-aace-b2be; ppStore_fingerprint=82074AF4EFA67B19FB0FBF0CED178E5795345BA0728E59B3%EF%BC%BF1621688673015; gr_session_id_b26c1cbc59d303d8=d99c07d1-8719-4232-80a2-69b378288d65; gr_session_id_b26c1cbc59d303d8_d99c07d1-8719-4232-80a2-69b378288d65=true; xxzl_token="qReyCkomHGAWHQOXB+IJGQElnVs3BOtXRHmBFcqxp15HJihMMVtvKyCh4a6wxnTNin35brBb//eSODvMgkQULA=="; xxzl_sid="undefined"; fzq_js_usdt_infolist_car=61cece06e5616a992826979d319a9ba8_1621688936195_6'
 
@@ -73,6 +137,17 @@ def Collect():
     url_engineer_car = "https://quanguo.58.com/cheliangmaimai/pn1/?PGTID=0d30001d-0221-8a2d-e3c0-00094d974a53&ClickID=62&template=new"
     url_truck = "https://quanguo.58.com/huochec/pn1/?PGTID=0d30001d-0221-8a2d-e3c0-00094d974a53&ClickID=54&template=new"
     url_trailer = "https://quanguo.58.com/guache/pn1/?PGTID=0d30001d-0221-8a2d-e3c0-00094d974a53&ClickID=71"
+
+    if city == "全国":
+        city = "quanguo"
+    elif city == "重庆市":
+        city = "cq"
+    elif "市" in city:
+        city = city[:-1]
+        city = getPinyin(city)
+    else:
+        city = getPinyin(city)
+    print(city)
 
     car_list = []
     car_path = './data/13che_ershoucar.json'
@@ -84,12 +159,18 @@ def Collect():
             save_num += 1
 
             # 请求数据
-            url_engineer_car = "https://quanguo.58.com/cheliangmaimai/pn" + str(
-                page) + "/?PGTID=0d30001d-0221-8a2d-e3c0-00094d974a53&ClickID=62&template=new"
-            url_truck = "https://quanguo.58.com/huochec/pn" + str(
-                page) + "/?PGTID=0d30001d-0221-8a2d-e3c0-00094d974a53&ClickID=54&template=new"
-            url_trailer = "https://quanguo.58.com/guache/pn" + str(
-                page) + "/?PGTID=0d30001d-0221-8a2d-e3c0-00094d974a53&ClickID=71"
+            # url_engineer_car = "https://"+city+".58.com/cheliangmaimai/pn" + str(
+            #     page) + "/?PGTID=0d30001d-0221-8a2d-e3c0-00094d974a53&ClickID=62&template=new"
+            # url_truck = "https://"+city+".58.com/huochec/pn" + str(
+            #     page) + "/?PGTID=0d30001d-0221-8a2d-e3c0-00094d974a53&ClickID=54&template=new"
+            # url_trailer = "https://"+city+".58.com/guache/pn" + str(
+            #     page) + "/?PGTID=0d30001d-0221-8a2d-e3c0-00094d974a53&ClickID=71"
+            url_engineer_car = "https://" + city + ".58.com/cheliangmaimai/pn" + str(
+                page) + "/"
+            url_truck = "https://" + city + ".58.com/huochec/pn" + str(
+                page) + "/"
+            url_trailer = "https://" + city + ".58.com/guache/pn" + str(
+                page) + "/"
 
             if url_num == 0:
                 url_car = url_engineer_car
@@ -123,7 +204,7 @@ def Collect():
                 data_html = GetHtmlCode(url_info, Cookie)
                 if "请输入验证码" in data_html:
                     print("访问频繁，需要输入验证码")
-                    time.sleep(300)
+                    time.sleep(1800)
                     data_html = GetHtmlCode(url_info, Cookie)
                 if data_html == None:
                     continue
@@ -202,7 +283,7 @@ def Collect():
 
                 car_list.append(car_single)
 
-                time.sleep(10)
+                time.sleep(15)
 
             #每10页保存一次
             if save_num % 10 == 0:
@@ -212,7 +293,7 @@ def Collect():
                 del car_list
                 save_num = 0
 
-            time.sleep(30)
+            time.sleep(60)
 
     if save_num != 0:
         with open(car_path, 'a+', encoding='utf-8') as f:

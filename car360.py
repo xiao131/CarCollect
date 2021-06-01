@@ -213,7 +213,7 @@ def Collect(city):
     except:
         config = {'car360':{'start_page':1,'end_page':50,'gap':10},'car13':{'start_page':1,'end_page':50,'gap':10}}
         with open('config.json', 'w+', encoding='utf-8') as f:
-            f.write(json.dumps(test_dict,indent = 4))
+            f.write(json.dumps(config,indent = 4))
         start_page = int(config['car360']['start_page'])
         end_page = int(config['car360']['end_page'])
         gap = int(config['car360']['gap'])

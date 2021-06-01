@@ -15,33 +15,34 @@ from selenium.webdriver.chrome.options import Options
 from time import sleep
 import car58
 import car360
-from updated2wego import PostMain as WegoPost
+# from updated2wego import PostMain as WegoPost
 
 #采集数据线程
 class CollectThread(Thread):
-    def __init__(self,select_num):
+    def __init__(self,select_num,select_city):
         #线程实例化时立即启动
         Thread.__init__(self)
         #主线程关闭
         self.setDaemon(True)
 
         self.select = select_num
+        self.select_city = select_city
         self.start()
 
     def run(self):
         #线程执行的代码
         if self.select == 0:
             #采集所有
-            car360.Collect()
-            car58.Collect()
+            car360.Collect(self.select_city)
+            car58.Collect(self.select_city)
 
         elif self.select == 1:
             #采集卡车之家
-            car360.Collect()
+            car360.Collect(self.select_city)
 
         elif self.select == 2:
             #采集58同城
-            car58.Collect()
+            car58.Collect(self.select_city)
 
         wx.CallAfter(pub.sendMessage, "update", msg="accept_data")
 
@@ -184,6 +185,10 @@ class Car(wx.Frame):
         self.m_choice1.SetSelection(0)
         bSizer2.Add(self.m_choice1, 0, wx.ALIGN_CENTER | wx.ALL, 5)
 
+        self.m_choice2 = wx.Choice(self, wx.ID_ANY, wx.DefaultPosition, wx.Size(80, -1), City_List, 0)
+        self.m_choice2.SetSelection(0)
+        bSizer2.Add(self.m_choice2, 0, wx.ALIGN_CENTER | wx.ALL, 5)
+
         self.m_staticText1 = wx.StaticText(self, wx.ID_ANY, u" 价格", wx.DefaultPosition, wx.DefaultSize, 0)
         self.m_staticText1.Wrap(-1)
         bSizer2.Add(self.m_staticText1, 0, wx.ALIGN_CENTER | wx.ALL, 5)
@@ -307,8 +312,9 @@ class Car(wx.Frame):
         elif select_str == "58同城":
             select_num = 2
 
+        select_city = self.m_choice2.GetStringSelection()
         # 采集函数
-        CollectThread(select_num)
+        CollectThread(select_num,select_city)
         # 将按钮设置为禁用
         self.ColseAllButton()
 
@@ -371,18 +377,23 @@ class Car(wx.Frame):
         self.ColseAllButton()
 
 if __name__ == '__main__':
-    Goods_Price = "" #商品价格修改
-    Goods_Stock = "" #商品库存修改
-    Open_File_Path = "" #导入文件的路径
-    Save_File_Path = "" #保存文件的路径
-    Data_List = [] #采集得到的数据列表
 
-    Dpy_Cookie = ""
-    Mc_Cookie = ""
-    Jn_Cookie = ""
+    #
+    City = "北京"
+    City_List = []
+    try:
+        city_code = car360.get_City()
+        for key in city_code:
+            if key == "全国":
+                continue
+            City_List.append(key)
+        #获取城市列表
+        City_List = sorted(City_List, key=lambda x: x.encode('gbk'))
+        City_List.insert(0,"全国")
+    except Exception as e:
+        print(e)
+
     Wego_Cookie = ""
-    Youzan_Cookie = ""
-    Mc_Account = ""
     Wego_Account = ""
     Wego_Password = ""
 
