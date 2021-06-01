@@ -286,7 +286,7 @@ def PostToWego(goods,tag2id):
     # print(r.text)
     print('上传商品成功：',goods['name'])
 
-def PostMain(json_path_list = ['./data/360che_ershoucar.json','./data/13che_ershoucar.json']):
+def PostMain(json_path_list = ['./data/360che_ershoucar.json','./data/360che_newcar.json','./data/13che_ershoucar.json']):
     # 流式分块取JSON 防止爆内存
     # json_path_list = ['./data/360che_ershoucar.json']
     try:
