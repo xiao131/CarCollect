@@ -1,20 +1,20 @@
 from urllib import request
 from urllib import error
-from time import time
-from time import sleep
-import datetime
-from xlwt import Workbook
-from pathlib import Path
-from os import makedirs
+# from time import time
+# from time import sleep
+# import datetime
+# from xlwt import Workbook
+# from pathlib import Path
+# from os import makedirs
 from PIL import Image
 
 import ijson
-from urllib.parse import quote,unquote
+from urllib.parse import quote#,unquote
 import pickle
 import json
 from requests import post,get
 import requests
-
+from excel2img import GetDetailImage
 
 def save_obj(obj, name ):
     with open('./data/'+ name + '.pkl', 'wb') as f:
@@ -301,6 +301,10 @@ def PostMain(json_path_list = ['./data/360che_ershoucar.json','./data/360che_new
             while True:
                 try:
                     car = objects.__next__()
+                    #生成配置图
+                    GetDetailImage(car['image'][0],car)
+                    car['image'].insert(0,"./data/bg.jpg")
+
                     if car['url'] in have_updated:
                         continue
                     if '360che_ershoucar' in json_path:

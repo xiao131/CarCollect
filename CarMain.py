@@ -1,21 +1,14 @@
 from threading import Thread
 from wx.lib.pubsub import pub
 import requests
-import json
 import wx
 import wx.xrc
 import wx.grid
-from xlwt import Workbook
-import pandas as pd
-from os import getcwd
-from os import chdir
 from re import findall
-from selenium.webdriver import Chrome
-from selenium.webdriver.chrome.options import Options
-from time import sleep
 import car58
 import car360
-# from updated2wego import PostMain as WegoPost
+from updated2wego import PostMain as WegoPost
+from updated2guanjiapo import main as GuanjiapoPost
 
 #采集数据线程
 class CollectThread(Thread):
@@ -83,49 +76,40 @@ class UpdatePriceThread(Thread):
 
 #上传数据线程
 class UpDataThread(Thread):
-    def __init__(self,select_num):
+    def __init__(self,select_num,update_type):
         #线程实例化时立即启动
         Thread.__init__(self)
         #主线程关闭
         self.select = select_num
+        self.update_type = update_type
         self.setDaemon(True)
         self.start()
     def run(self):
         #线程执行的代码
         if self.select == 0:
             #上传所有
-            car360.Collect()
-            car58.Collect()
+            json_path_list = ['./data/360che_ershoucar.json', './data/360che_newcar.json',
+                              './data/13che_ershoucar.json']
+            if self.update_type == "微商相册":
+                WegoPost(json_path_list)
+            else:
+                GuanjiapoPost(json_path_list)
 
         elif self.select == 1:
             #上传卡车之家
-            car360.Collect()
+            json_path_list = ['./data/360che_ershoucar.json', './data/360che_newcar.json']
+            if self.update_type == "微商相册":
+                WegoPost(json_path_list)
+            else:
+                GuanjiapoPost(json_path_list)
 
         elif self.select == 2:
             #上传58同城
-            car58.Collect()
-        #上传数据函数
-        global Data_List
-        global Tag2Id
-        global ALL_CAT
-        global Wego_Cookie
-        global Mc_Account
-        global Wego_Account
-        global Wego_Password
-        f = open("./data/wogo.ini", "r")
-        for account in f.readlines():
-            account = account.split(" ")
-            if len(account) != 2:
-                continue
-            if account[0] == Wego_Account:
-                Wego_Password = account[1]
-                break
-        f.close()
-        Wego_Cookie = FF.WegoLogin(Wego_Account, Wego_Password)
-
-        # GetAllCookie(Mc_Account)
-        Tag2Id = FF.CreateTag(ALL_CAT, Wego_Cookie)
-        FF.PostToWego(Data_List, Tag2Id,Wego_Cookie)
+            json_path_list = ['./data/13che_ershoucar.json']
+            if self.update_type == "微商相册":
+                WegoPost(json_path_list)
+            else:
+                GuanjiapoPost(json_path_list)
 
         wx.CallAfter(pub.sendMessage, "update", msg="accept_up")
 
@@ -142,32 +126,6 @@ def Get_Csrf_token(Youzan_cookie):
     csrf_token = csrf_token[0][14:-1]
     print("csrf_token:",csrf_token)
     return csrf_token
-
-#上传有赞数据线程
-class UpDataYouzanThread(Thread):
-    def __init__(self):
-        #线程实例化时立即启动
-        Thread.__init__(self)
-        #主线程关闭
-        self.setDaemon(True)
-        self.start()
-    def run(self):
-        #线程执行的代码
-        #上传数据函数
-        global Data_List
-        global Tag2Id
-        global ALL_CAT
-        global Youzan_Cookie
-        global Mc_Account
-        GetAllCookie(Mc_Account)
-        # Tag2Id = FF.CreateTag(ALL_CAT, Wego_Cookie)
-        # FF.PostToWego(Data_List, Tag2Id,Wego_Cookie)
-        # print(Data_List)
-        # print(Get_Csrf_token())
-        # print(Youzan_Cookie)
-        FF.PostToYouZan(Data_List,csrf_token=Get_Csrf_token(Youzan_Cookie),cookie=Youzan_Cookie)
-
-        wx.CallAfter(pub.sendMessage, "update", msg="accept_up")
 
 class Car(wx.Frame):
     def __init__(self, parent):
@@ -359,26 +317,30 @@ class Car(wx.Frame):
         Wego_Account = wogo_select[5:]
 
         #上传
-        UpDataThread(select_num)
+        UpDataThread(select_num,"微商相册")
         # 将按钮设置为禁用
         self.ColseAllButton()
 
     # 上传数据，到管家婆
     def UpData_Guanjiapo(self, event):
+        # 多线程
+        # 获取上传数据的类别
+        select_str = self.m_choice1.GetStringSelection()
+        select_num = 0
+        if select_str == "采集全部":
+            select_num = 0
+        elif select_str == "卡车之家":
+            select_num = 1
+        elif select_str == "58同城":
+            select_num = 2
 
-        # wx.MessageBox("上传Cookie未更新", "提示消息", wx.OK | wx.YES_DEFAULT)
-        # return
-        global Mc_Account
-        mc_select = self.m_choice2.GetStringSelection()
-
-        # 获取价格，判断是否为空
-        UpDataYouzanThread()
+        # 上传
+        UpDataThread(select_num, "管家婆")
         # 将按钮设置为禁用
         self.ColseAllButton()
 
 if __name__ == '__main__':
 
-    #
     City = "北京"
     City_List = []
     try:
@@ -393,12 +355,6 @@ if __name__ == '__main__':
     except Exception as e:
         print(e)
 
-    Wego_Cookie = ""
-    Wego_Account = ""
-    Wego_Password = ""
-
-    Tag2Id = {} #标签对应的上传ID
-    ALL_CAT = {}
     URL_MMP = "http://demo.xx2018.cn/210524二手车采集.txt"
     app = wx.App(False)
     frame = Car(None)

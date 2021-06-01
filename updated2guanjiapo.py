@@ -1,19 +1,19 @@
 from urllib import request
 from urllib import error
-from time import time
-from time import sleep
-import datetime
-from xlwt import Workbook
-from pathlib import Path
-from os import makedirs
+# from time import time
+# from time import sleep
+# import datetime
+# from xlwt import Workbook
+# from pathlib import Path
+# from os import makedirs
 import ijson
-from urllib.parse import quote,unquote
+# from urllib.parse import quote,unquote
 from PIL import Image
 import pickle
 import json
 from requests import post,get
 import requests
-
+from excel2img import GetDetailImage
 
 def save_obj(obj, name ):
     with open('./data/'+ name + '.pkl', 'wb') as f:
@@ -280,12 +280,12 @@ def login(username):
         return None,esn
 
 
-def main():
+def main(json_path_list = ['./data/360che_ershoucar.json','./data/360che_newcar.json','./data/13che_ershoucar.json']):
     token, esn = login('18620241959')
     if token == None:
         return
     # 流式分块取JSON 防止爆内存
-    json_path_list = ['./data/360che_ershoucar.json','./data/360che_newcar.json']
+
     try:
         have_updated = load_obj('guanjiapo_have_updated')
     except:
@@ -298,6 +298,10 @@ def main():
             while True:
                 try:
                     car = objects.__next__()
+                    # 生成配置图
+                    GetDetailImage(car['image'][0], car)
+                    car['image'].insert(0, "./data/bg.jpg")
+
                     if car['url'] in have_updated:
                         continue
 
@@ -330,4 +334,5 @@ def main():
     save_obj(have_updated, 'guanjiapo_have_updated')
 
 if __name__ == "__main__":
-    main()
+    # main()
+    pass
