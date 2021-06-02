@@ -268,7 +268,7 @@ def login(username):
               }
     login_url = 'https://api.graspishop.com:50000/apc/login/login/login'
     esn = 'randombMto4mtG1MtZrfcE1622280169460'
-    login_data = 'ESN={}&TenantMobile={}&UserCode={}&PassWord=F78C36F4B33580EC50670D30C9B2A471'.format(esn,username,username)
+    login_data = 'ESN={}&TenantMobile={}&UserCode=kispolo&PassWord=F78C36F4B33580EC50670D30C9B2A471'.format(esn,username)
     r = post(login_url, data=login_data, headers=header)
     format_dict = json.loads(r.text)
     print(format_dict['RetMessage'])
