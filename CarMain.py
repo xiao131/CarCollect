@@ -4,7 +4,7 @@ import requests
 import wx
 import wx.xrc
 import wx.grid
-from re import findall
+# from re import findall
 import car58
 import car360
 from updated2wego import PostMain as WegoPost
@@ -113,23 +113,9 @@ class UpDataThread(Thread):
 
         wx.CallAfter(pub.sendMessage, "update", msg="accept_up")
 
-#得到有赞的csrf-token
-def Get_Csrf_token(Youzan_cookie):
-    url = "https://account.youzan.com/login"
-    headers = {
-        "User-Agent": "Mozilla/5.0 (iPad; CPU OS 11_0 like Mac OS X) AppleWebKit/604.1.34 (KHTML, like Gecko) Version/11.0 Mobile/15A5341f Safari/604.1"
-        , "Cookie": Youzan_cookie}
-    res = requests.get(url,headers=headers)
-    res = res.text
-    csrf_token = findall(r'"csrf_token":"\d+"', res)
-    # print(csrf_token)
-    csrf_token = csrf_token[0][14:-1]
-    print("csrf_token:",csrf_token)
-    return csrf_token
-
 class Car(wx.Frame):
     def __init__(self, parent):
-        wx.Frame.__init__(self, parent, id=wx.ID_ANY, title = u"二手车采集 V1.0.0", pos=wx.DefaultPosition,
+        wx.Frame.__init__(self, parent, id=wx.ID_ANY, title = u"二手车采集 V1.0.5", pos=wx.DefaultPosition,
                           size=wx.Size(540, 170), style=wx.DEFAULT_FRAME_STYLE | wx.TAB_TRAVERSAL)
 
         self.SetSizeHints(wx.DefaultSize, wx.DefaultSize)
