@@ -109,10 +109,10 @@ def get_Ershou_Url(region,page_end = 1,page_strat = 1):
     region_url = 'https://tao.360che.com/'
     if region != '000':  # '000' 代表全国
         region_url += region+'/{}.html'
-    print('当前爬取：' + region_url)
     ershou_car_list = []
     for i in tqdm(range(page_strat,page_end+1),desc="获取所有二手车链接",ncols=100):
         html_content = GetHtmlCode(region_url.format(i))
+        print('当前爬取：' + region_url.format(i))
         soup = BS(html_content, 'html.parser', from_encoding='utf-8')
         try:
             content = soup.find('div', class_='truck-list-list')
