@@ -198,6 +198,7 @@ def get_City():
     return city_code
 
 def Collect(city):
+    global all_pingpai_set
     # 得到所有城市code  {'成都':code,...}
     city_code = get_City()
 
@@ -248,4 +249,5 @@ def Collect(city):
         del car_list
 
 if __name__ == '__main__':
+    all_pingpai_set = set()
     pass
