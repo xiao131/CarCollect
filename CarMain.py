@@ -115,7 +115,7 @@ class UpDataThread(Thread):
 
 class Car(wx.Frame):
     def __init__(self, parent):
-        wx.Frame.__init__(self, parent, id=wx.ID_ANY, title = u"二手车采集 V1.0.5", pos=wx.DefaultPosition,
+        wx.Frame.__init__(self, parent, id=wx.ID_ANY, title = u"二手车采集 V1.1.0", pos=wx.DefaultPosition,
                           size=wx.Size(540, 170), style=wx.DEFAULT_FRAME_STYLE | wx.TAB_TRAVERSAL)
 
         self.SetSizeHints(wx.DefaultSize, wx.DefaultSize)
@@ -230,13 +230,13 @@ class Car(wx.Frame):
     def updateDisplay(self, msg):
         t = msg
         if t == "accept_data":
-            self.updateData()
+            #self.updateData()
             wx.MessageBox("采集数据已经成功完成！", "完成消息", wx.OK | wx.YES_DEFAULT)
             # 将按钮重新开启
             self.EnableAllButton()
         elif t == "accept_price":
             #更新数据
-            self.updateData()
+            #self.updateData()
             wx.MessageBox("修改价格已经成功完成！", "完成消息", wx.OK | wx.YES_DEFAULT)
             # 将按钮重新开启
             self.EnableAllButton()
