@@ -125,14 +125,17 @@ def get_Ershou_Url(region,page_end = 1,page_strat = 1):
 
         this_page_cars = content.find_all('a',class_ = 'truck-truck-content')
         for car in this_page_cars:
-            car_detail = {}
-            car_detail['url'] = 'https://tao.360che.com' + car['href']
-            car_detail['name'] = car.find('div',class_ = 'title').get_text().replace('\n','').strip()
-            car_detail['info'] = car.find('div',class_ = 'info').get_text().replace('\n','').strip()
-            car_detail['price'] = car.find('div', class_='price').get_text().replace('\n','').strip()
-            # car_detail['品牌'] = car_detail['info'].split('/')[0]
-            car_detail['datasource'] = '360-二手车'
-            ershou_car_list.append(car_detail)
+            try:
+                car_detail = {}
+                car_detail['url'] = 'https://tao.360che.com' + car['href']
+                car_detail['name'] = car.find('div',class_ = 'title').get_text().replace('\n','').strip()
+                car_detail['info'] = car.find('div',class_ = 'info').get_text().replace('\n','').strip()
+                car_detail['price'] = car.find('div', class_='price').get_text().replace('\n','').strip()
+                # car_detail['品牌'] = car_detail['info'].split('/')[0]
+                car_detail['datasource'] = '360-二手车'
+                ershou_car_list.append(car_detail)
+            except:
+                pass
 
     return ershou_car_list
 
@@ -154,33 +157,36 @@ def get_Newcar_Url(page_end = 1,page_strat = 1):
                 break
             this_page_cars = content.find_all('li',class_='modular')
             for car in this_page_cars:
-                car_detail = {}
-                #
-                href_list = car.find('div',class_= 'config').find_all('p')[3].find_all('a')
-                need_href = ''
-                for href in href_list:
-                    if '国六' in href.get_text():
-                        need_href = href['href']
-                        break
-                if need_href == '':
-                    continue
-                # href = car.find('a',class_ = 'figure')['href']
+                try:
+                    car_detail = {}
+                    #
+                    href_list = car.find('div',class_= 'config').find_all('p')[3].find_all('a')
+                    need_href = ''
+                    for href in href_list:
+                        if '国六' in href.get_text():
+                            need_href = href['href']
+                            break
+                    if need_href == '':
+                        continue
+                    # href = car.find('a',class_ = 'figure')['href']
 
-                # 'price/c1_s64_b8_s6662_p7%E5%9B%BD%E5%85%AD.html'
-                # href = href.split('_')[:-1]+['param.html']
-                # href = "_".join(href)
-                car_detail['url'] = 'https://product.360che.com'+ quote(need_href)
+                    # 'price/c1_s64_b8_s6662_p7%E5%9B%BD%E5%85%AD.html'
+                    # href = href.split('_')[:-1]+['param.html']
+                    # href = "_".join(href)
+                    car_detail['url'] = 'https://product.360che.com'+ quote(need_href)
 
 
-                name = car.find('div',class_= 'price-wrap temporary').find('tbody').find('td').find('a').get_text().replace('\n','').strip()
-                # name = car.find('h2').get_text().replace(' ','').replace('\n','')
-                car_detail['name'] = name
-                car_detail['品牌'] = name.split(' ')[0]
-                all_pingpai_set.add(car_detail['品牌'])
-                img_path = car.find('img')['src']
-                car_detail['image'] = [img_path]
-                car_detail['datasource'] = '360-新车'
-                car_list.append(car_detail)
+                    name = car.find('div',class_= 'price-wrap temporary').find('tbody').find('td').find('a').get_text().replace('\n','').strip()
+                    # name = car.find('h2').get_text().replace(' ','').replace('\n','')
+                    car_detail['name'] = name
+                    car_detail['品牌'] = name.split(' ')[0]
+                    all_pingpai_set.add(car_detail['品牌'])
+                    img_path = car.find('img')['src']
+                    car_detail['image'] = [img_path]
+                    car_detail['datasource'] = '360-新车'
+                    car_list.append(car_detail)
+                except:
+                    pass
 
     return car_list
 
