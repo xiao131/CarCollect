@@ -5,6 +5,7 @@ from urllib.parse import quote
 import pickle
 import json
 from tqdm import tqdm
+all_pingpai_set = set()
 
 def save_obj(obj, name):
     with open('./data/' + name + '.pkl', 'wb') as f:
@@ -51,7 +52,7 @@ def GetHtmlCode(url, headers = None):
 
 def get_Ershou_Detail(car_list):
     global all_pingpai_set
-    for car in tqdm(car_list, desc="开始爬取二手车具体信息",ncols=100):
+    for car in tqdm(car_list, desc="开始爬取二手车具体信息",ncols=80):
         html_content = GetHtmlCode(car['url'])
         soup = BS(html_content, 'html.parser', from_encoding='utf-8')
         parameter_detail = soup.find('div', class_='truck-detail container')
@@ -78,7 +79,7 @@ def get_Ershou_Detail(car_list):
 
 def get_Newcar_Detail(car_list):
     count = 0
-    for car in tqdm(car_list,desc="开始爬取新车具体信息",ncols=100):
+    for car in tqdm(car_list,desc="开始爬取新车具体信息",ncols=80):
         count+=1
         html_content = GetHtmlCode(car['url'])
         soup = BS(html_content, 'html.parser', from_encoding='utf-8')
@@ -109,10 +110,12 @@ def get_Ershou_Url(region,page_end = 1,page_strat = 1):
     region_url = 'https://tao.360che.com/'
     if region != '000':  # '000' 代表全国
         region_url += region+'/{}.html'
+    else:
+        region_url += '{}.html'
     ershou_car_list = []
-    for i in tqdm(range(page_strat,page_end+1),desc="获取所有二手车链接",ncols=100):
+    print('\n当前爬取：' + region_url)
+    for i in tqdm(range(page_strat,page_end+1),desc="获取所有二手车链接",ncols=80):
         html_content = GetHtmlCode(region_url.format(i))
-        print('当前爬取：' + region_url.format(i))
         soup = BS(html_content, 'html.parser', from_encoding='utf-8')
         try:
             content = soup.find('div', class_='truck-list-list')
@@ -140,8 +143,8 @@ def get_Newcar_Url(page_end = 1,page_strat = 1):
     car_list = []
 
     for url in URL:
-        print('当前爬取：'+ url)
-        for i in tqdm(range(page_strat,page_end+1),desc="获取所有新车链接",ncols=100):
+        print('当前爬取：' + url)
+        for i in tqdm(range(page_strat,page_end+1),desc="获取所有新车链接",ncols=80):
             html_content = GetHtmlCode(url.format(i))
             soup = BS(html_content, 'html.parser', from_encoding='utf-8')
             try:
@@ -222,7 +225,7 @@ def Collect(city):
 
     print('此次爬取页数区间为：{}-{}页，每间隔{}页保存一次信息。'.format(start_page,end_page,gap))
     before_i = start_page
-    for i in tqdm(range(start_page, end_page, gap), desc='总页数', ncols=100):
+    for i in tqdm(range(start_page, end_page, gap), desc='总页数', ncols=80):
         try:
             all_pingpai_set = load_obj('pingpai_set')
         except:
@@ -249,5 +252,5 @@ def Collect(city):
         del car_list
 
 if __name__ == '__main__':
-    all_pingpai_set = set()
+
     pass
