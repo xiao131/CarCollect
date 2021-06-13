@@ -338,6 +338,20 @@ if __name__ == '__main__':
         #获取城市列表
         City_List = sorted(City_List, key=lambda x: x.encode('gbk'))
         City_List.insert(0,"全国")
+        City_List.insert(1, "北京市")
+        City_List.insert(2, "上海市")
+        City_List.insert(3, "广州市")
+        City_List.insert(4, "深圳市")
+        City_List.insert(5, "成都市")
+        City_List.insert(6, "杭州市")
+        City_List.insert(7, "重庆市")
+        City_List.insert(8, "西安市")
+        City_List.insert(9, "武汉市")
+        City_List.insert(10, "苏州市")
+        City_List.insert(11, "南京市")
+        City_List.insert(12, "天津市")
+        City_List.insert(13, "郑州市")
+        City_List.insert(14, "长沙市")
     except Exception as e:
         print(e)
 
