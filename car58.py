@@ -142,6 +142,8 @@ def Collect(city):
         city = "quanguo"
     elif city == "重庆市":
         city = "cq"
+    elif city == "深圳市":
+        city = "sz"
     elif "市" in city:
         city = city[:-1]
         city = getPinyin(city)
