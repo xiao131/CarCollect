@@ -334,6 +334,8 @@ def main(json_path_list = ['./data/360che_ershoucar.json','./data/360che_newcar.
                 except StopIteration as e:
                     print("数据读取完成")
                     break
+                except:
+                    continue
     save_obj(have_updated, 'guanjiapo_have_updated')
 
 if __name__ == "__main__":
