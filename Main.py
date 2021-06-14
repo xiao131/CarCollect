@@ -15,6 +15,8 @@ from fontTools.ttLib import TTFont
 import time
 from tqdm import tqdm
 import json
+from PIL import Image,ImageDraw,ImageFont
+from pylab import mpl
 
 def GetFile(name):
     url = "http://demo.xx2018.cn/CarCollect/"+name+".py"
@@ -38,6 +40,7 @@ if __name__ == '__main__':
             GetFile("car360")
             GetFile("updated2wego")
             GetFile("updated2guanjiapo")
+            GetFile("excel2img")
             #运行主程序
             exec(code.content)
     except Exception as e:
