@@ -115,7 +115,7 @@ class UpDataThread(Thread):
 
 class Car(wx.Frame):
     def __init__(self, parent):
-        wx.Frame.__init__(self, parent, id=wx.ID_ANY, title = u"二手车采集 V1.1.0", pos=wx.DefaultPosition,
+        wx.Frame.__init__(self, parent, id=wx.ID_ANY, title = u"二手车采集 V1.1.2", pos=wx.DefaultPosition,
                           size=wx.Size(540, 170), style=wx.DEFAULT_FRAME_STYLE | wx.TAB_TRAVERSAL)
 
         self.SetSizeHints(wx.DefaultSize, wx.DefaultSize)
@@ -199,10 +199,10 @@ class Car(wx.Frame):
 
         pub.subscribe(self.updateDisplay, "update")
 
-        html_info = requests.get(URL_MMP)
-        if html_info.status_code != 200:
-            wx.MessageBox("登录失败，请检查您的网络，或者联系开发人员", "you are wrong", wx.OK | wx.YES_DEFAULT)
-            self.Destroy()
+        # html_info = requests.get(URL_MMP)
+        # if html_info.status_code != 200:
+        #     wx.MessageBox("登录失败，请检查您的网络，或者联系开发人员", "you are wrong", wx.OK | wx.YES_DEFAULT)
+        #     self.Destroy()
 
         #在 采集 和上传 之前获取Cookie
         #获取Cookie和更新Cookie
@@ -338,6 +338,20 @@ if __name__ == '__main__':
         #获取城市列表
         City_List = sorted(City_List, key=lambda x: x.encode('gbk'))
         City_List.insert(0,"全国")
+        City_List.insert(1, "北京市")
+        City_List.insert(2, "上海市")
+        City_List.insert(3, "广州市")
+        City_List.insert(4, "深圳市")
+        City_List.insert(5, "成都市")
+        City_List.insert(6, "杭州市")
+        City_List.insert(7, "重庆市")
+        City_List.insert(8, "西安市")
+        City_List.insert(9, "武汉市")
+        City_List.insert(10, "苏州市")
+        City_List.insert(11, "南京市")
+        City_List.insert(12, "天津市")
+        City_List.insert(13, "郑州市")
+        City_List.insert(14, "长沙市")
     except Exception as e:
         print(e)
 
