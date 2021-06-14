@@ -293,7 +293,7 @@ def main(json_path_list = ['./data/360che_ershoucar.json','./data/360che_newcar.
     count = 1
     for json_path in json_path_list:
         with open(json_path, 'r', encoding='utf-8') as f:
-            objects = ijson.items(f, 'item')
+            objects = ijson.items(f, 'item',multiple_values=True)
             # 这个objects在这里就是相当于一个生成器，可以调用next函数取它的下一个值
             while True:
                 try:
@@ -301,7 +301,7 @@ def main(json_path_list = ['./data/360che_ershoucar.json','./data/360che_newcar.
                     # 生成配置图
                     GetDetailImage(car['image'][0], car)
                     car['image'].insert(0, "./data/bg.jpg")
-
+                    print(car['name'])
                     if car['url'] in have_updated:
                         continue
 
@@ -334,7 +334,9 @@ def main(json_path_list = ['./data/360che_ershoucar.json','./data/360che_newcar.
                 except StopIteration as e:
                     print("数据读取完成")
                     break
-                except:
+                except Exception as e:
+                    print(car['url'])
+                    print(e)
                     continue
     save_obj(have_updated, 'guanjiapo_have_updated')
 

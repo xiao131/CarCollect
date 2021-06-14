@@ -296,7 +296,7 @@ def PostMain(json_path_list = ['./data/360che_ershoucar.json','./data/360che_new
     count = 1
     for json_path in json_path_list:
         with open(json_path, 'r', encoding='utf-8') as f:
-            objects = ijson.items(f, 'item')
+            objects = ijson.items(f, 'item',multiple_values=True)
             # 这个objects在这里就是相当于一个生成器，可以调用next函数取它的下一个值
             while True:
                 try:
