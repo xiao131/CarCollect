@@ -9,7 +9,10 @@ def GetDetailImage(img_url,car_info,save_path="./data/bg.jpg"):
     mpl.rcParams['axes.unicode_minus'] = False
 
     title = car_info["name"]
-    desc = car_info["info"]
+    try:
+        desc = car_info["info"]
+    except:
+        desc = car_info["name"]
 
     # 创建一张空白图片
     img = Image.new('RGB', (800, 600), (255, 255, 255))
@@ -67,6 +70,12 @@ def GetDetailImage(img_url,car_info,save_path="./data/bg.jpg"):
         if len(temp_desc) <= 28:
             break
 
+    #判断新车还是二手车
+    try:
+        temp = car_info["detail"]
+        car_info = car_info["detail"]["1"]
+    except:
+        pass
     # 写配置
     row = 1
     for key in car_info:
