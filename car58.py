@@ -216,9 +216,15 @@ def Collect(city):
                     Cookie = Cookie2
                 data_html = GetHtmlCode(url_info, Cookie)
                 if "请输入验证码" in data_html:
-                    print("访问频繁，需要输入验证码")
-                    time.sleep(1800)
+                    if url_num % 2 == 1:
+                        Cookie = Cookie2
+                    else:
+                        Cookie = Cookie1
                     data_html = GetHtmlCode(url_info, Cookie)
+                    if "请输入验证码" in data_html:
+                        print("访问频繁，需要输入验证码")
+                        time.sleep(1800)
+                        data_html = GetHtmlCode(url_info, Cookie)
                 if data_html == None:
                     continue
                 # print(data_html)
@@ -297,7 +303,7 @@ def Collect(city):
 
                 car_list.append(car_single)
 
-                time.sleep(30)
+                time.sleep(120)
 
             #每10页保存一次
             if save_num % 10 == 0:
@@ -307,7 +313,7 @@ def Collect(city):
                 del car_list
                 save_num = 0
 
-            time.sleep(150)
+            time.sleep(300)
 
     if save_num != 0:
         with open(car_path, 'a+', encoding='utf-8') as f:
