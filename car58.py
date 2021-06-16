@@ -131,8 +131,9 @@ def getPinyin(string):
 
 def Collect(city):
     # 58同城 二手车
-    Cookie = 'f=n; commontopbar_new_city_info=8728%7C%E5%85%A8%E5%9B%BD%7Cquanguo; f=n; commontopbar_new_city_info=8728%7C%E5%85%A8%E5%9B%BD%7Cquanguo; commontopbar_ipcity=wx%7C%E6%97%A0%E9%94%A1%7C0; time_create=1624258576157; userid360_xml=1C6F7C345E3BF67FEACA7781B6403670; fzq_h=b7ce8b1d7996bf6f4ba538769e61c338_1621665244296_42fc8daac9b34a4b9d86962a5c4e44bc_826441976; sessionid=60893154-450a-4238-8c3c-7a8a96ac35df; id58=c5/nfGCopdwHv6MSL2U7Ag==; 58tj_uuid=d86b5da3-47de-44cf-8d2c-35bacd80a043; wmda_uuid=63d09f4faf599c46f69f7f4dda571ac2; wmda_new_uuid=1; als=0; f=n; gr_user_id=0bfe92c5-5988-4a62-8f77-27a732c42e83; wmda_visited_projects=%3B1732038237441%3B11187958619315; xxzl_deviceid=jpM3DraNrxoxJPMSRi9Qr%2B6wCtJrxpcGj4%2BJ0AqLZqbw%2BTOHPaWowsG%2FVjOIscz6; wmda_session_id_1732038237441=1621687253811-8fe8cedb-763f-d82a; new_uv=4; utm_source=; spm=; init_refer=https%253A%252F%252Fquanguo.58.com%252Fershouche%252F; new_session=0; 58home=wx; city=wx; xxzl_cid=4aa405d2705148d48f0768b73ade5fb4; xzuid=16995c85-c03e-4e53-acd8-4bfdebf62ce4; wmda_session_id_11187958619315=1621688608289-d998f213-aace-b2be; ppStore_fingerprint=82074AF4EFA67B19FB0FBF0CED178E5795345BA0728E59B3%EF%BC%BF1621688673015; gr_session_id_b26c1cbc59d303d8=d99c07d1-8719-4232-80a2-69b378288d65; gr_session_id_b26c1cbc59d303d8_d99c07d1-8719-4232-80a2-69b378288d65=true; xxzl_token="qReyCkomHGAWHQOXB+IJGQElnVs3BOtXRHmBFcqxp15HJihMMVtvKyCh4a6wxnTNin35brBb//eSODvMgkQULA=="; xxzl_sid="undefined"; fzq_js_usdt_infolist_car=61cece06e5616a992826979d319a9ba8_1621688936195_6'
-
+    Cookie1 = 'f=n; commontopbar_new_city_info=8728%7C%E5%85%A8%E5%9B%BD%7Cquanguo; f=n; commontopbar_new_city_info=8728%7C%E5%85%A8%E5%9B%BD%7Cquanguo; commontopbar_ipcity=wx%7C%E6%97%A0%E9%94%A1%7C0; time_create=1624258576157; userid360_xml=1C6F7C345E3BF67FEACA7781B6403670; fzq_h=b7ce8b1d7996bf6f4ba538769e61c338_1621665244296_42fc8daac9b34a4b9d86962a5c4e44bc_826441976; sessionid=60893154-450a-4238-8c3c-7a8a96ac35df; id58=c5/nfGCopdwHv6MSL2U7Ag==; 58tj_uuid=d86b5da3-47de-44cf-8d2c-35bacd80a043; wmda_uuid=63d09f4faf599c46f69f7f4dda571ac2; wmda_new_uuid=1; als=0; f=n; gr_user_id=0bfe92c5-5988-4a62-8f77-27a732c42e83; wmda_visited_projects=%3B1732038237441%3B11187958619315; xxzl_deviceid=jpM3DraNrxoxJPMSRi9Qr%2B6wCtJrxpcGj4%2BJ0AqLZqbw%2BTOHPaWowsG%2FVjOIscz6; wmda_session_id_1732038237441=1621687253811-8fe8cedb-763f-d82a; new_uv=4; utm_source=; spm=; init_refer=https%253A%252F%252Fquanguo.58.com%252Fershouche%252F; new_session=0; 58home=wx; city=wx; xxzl_cid=4aa405d2705148d48f0768b73ade5fb4; xzuid=16995c85-c03e-4e53-acd8-4bfdebf62ce4; wmda_session_id_11187958619315=1621688608289-d998f213-aace-b2be; ppStore_fingerprint=82074AF4EFA67B19FB0FBF0CED178E5795345BA0728E59B3%EF%BC%BF1621688673015; gr_session_id_b26c1cbc59d303d8=d99c07d1-8719-4232-80a2-69b378288d65; gr_session_id_b26c1cbc59d303d8_d99c07d1-8719-4232-80a2-69b378288d65=true; xxzl_token="qReyCkomHGAWHQOXB+IJGQElnVs3BOtXRHmBFcqxp15HJihMMVtvKyCh4a6wxnTNin35brBb//eSODvMgkQULA=="; xxzl_sid="undefined"; fzq_js_usdt_infolist_car=61cece06e5616a992826979d319a9ba8_1621688936195_6'
+    Cookie2 = 'f=n; commontopbar_new_city_info=93%7C%E6%97%A0%E9%94%A1%7Cwx; time_create=1626428454121; userid360_xml=3FACE3B0EA7304D01AFBE1587FBB82C5; myLat=""; myLon=""; id58=wVPluWDJxxZ7iyYrYDH7eQ==; spm=u-LlFBrx8a1luDwQM.sgppzq_zbt; mcity=wx; f=n; commontopbar_new_city_info=93%7C%E6%97%A0%E9%94%A1%7Cwx; 58home=wx; city=wx; commontopbar_ipcity=wx%7C%E6%97%A0%E9%94%A1%7C0; 58tj_uuid=d38ec230-eeea-42ea-a63d-c91dbd8fb4fc; utm_source=market; new_uv=1; als=0; xxzl_cid=77898cd3892b4935bc775a298f9a97f1; xzuid=2324d1fd-1875-46a0-950c-ec3b4b71e517; wmda_new_uuid=1; wmda_uuid=12fb69a02e57815c0e2761ed91363f43; wmda_session_id_11187958619315=1623836441164-fc199436-b237-a941; fzq_h=cc1f5afe2bba47015723d188e6678205_1623836442670_326c444736164ae6ac0ef84aae683f87_987139655; sessionid=daca027c-413e-498d-b55b-7655d6fe4151; wmda_session_id_1732038237441=1623836443110-bb65b132-eed4-9421; wmda_visited_projects=%3B11187958619315%3B1732038237441; new_session=0; init_refer=; gr_user_id=b9e65bf5-521d-4d52-8ccd-80ffa2bfe5a0; gr_session_id_b26c1cbc59d303d8=a30e1ef2-a90b-4399-807b-383ba31842a2; gr_session_id_b26c1cbc59d303d8_a30e1ef2-a90b-4399-807b-383ba31842a2=true; ppStore_fingerprint=0148FF5E7C9F5FDC67AFBA6A0B0EB34C2E48909511B980AE%EF%BC%BF1623836472666; fzq_js_usdt_infolist_car=0716a44472d98c18e1f8a85a46e2e7e1_1623836479484_7'
+    Cookie = Cookie1
     # 1、工程车
     url_engineer_car = "https://quanguo.58.com/cheliangmaimai/pn1/?PGTID=0d30001d-0221-8a2d-e3c0-00094d974a53&ClickID=62&template=new"
     url_truck = "https://quanguo.58.com/huochec/pn1/?PGTID=0d30001d-0221-8a2d-e3c0-00094d974a53&ClickID=54&template=new"
@@ -186,6 +187,10 @@ def Collect(city):
             print(car_type, url_car)
 
             # 解析数据
+            if page % 2 == 1:
+                Cookie = Cookie1
+            else:
+                Cookie = Cookie2
             content_html = GetHtmlCode(url_car, Cookie)
             # print(content_html)
             soup = BeautifulSoup(content_html, "html.parser")
@@ -194,6 +199,7 @@ def Collect(city):
             print(len(car_links))
             if len(car_links) == 0:
                 break
+            url_num = 0
             for car_link in car_links:
                 #单条车信息
                 car_single = {}
@@ -203,6 +209,11 @@ def Collect(city):
                 url_info = car_link["href"]
 
                 # 进入链接详情页，获取数据
+                url_num += 1
+                if url_num % 2 == 1:
+                    Cookie = Cookie1
+                else:
+                    Cookie = Cookie2
                 data_html = GetHtmlCode(url_info, Cookie)
                 if "请输入验证码" in data_html:
                     print("访问频繁，需要输入验证码")
@@ -211,6 +222,7 @@ def Collect(city):
                 if data_html == None:
                     continue
                 # print(data_html)
+
                 data_html = convertNumber(data_html)
                 data_html = BeautifulSoup(data_html, "html.parser")
 
@@ -285,7 +297,7 @@ def Collect(city):
 
                 car_list.append(car_single)
 
-                time.sleep(15)
+                time.sleep(30)
 
             #每10页保存一次
             if save_num % 10 == 0:
@@ -295,7 +307,7 @@ def Collect(city):
                 del car_list
                 save_num = 0
 
-            time.sleep(60)
+            time.sleep(150)
 
     if save_num != 0:
         with open(car_path, 'a+', encoding='utf-8') as f:
