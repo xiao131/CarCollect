@@ -97,7 +97,7 @@ class UpDataThread(Thread):
 
         elif self.select == 1:
             #上传卡车之家
-            json_path_list = ['./data/360che_ershoucar.json', './data/360che_newcar.json']
+            json_path_list = ['./data/360che_newcar.json','./data/360che_ershoucar.json']
             if self.update_type == "微商相册":
                 WegoPost(json_path_list)
             else:
@@ -325,8 +325,9 @@ class Car(wx.Frame):
         # 将按钮设置为禁用
         self.ColseAllButton()
 
-if __name__ == '__main__':
 
+
+if __name__ == '__main__':
     City = "北京"
     City_List = []
     try:
@@ -335,9 +336,9 @@ if __name__ == '__main__':
             if key == "全国":
                 continue
             City_List.append(key)
-        #获取城市列表
+        # 获取城市列表
         City_List = sorted(City_List, key=lambda x: x.encode('gbk'))
-        City_List.insert(0,"全国")
+        City_List.insert(0, "全国")
         City_List.insert(1, "北京市")
         City_List.insert(2, "上海市")
         City_List.insert(3, "广州市")

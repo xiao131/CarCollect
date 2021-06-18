@@ -123,7 +123,7 @@ def CreateTag(car):
     # theme_data = theme_data.encode('utf-8')
     r_theme = post(theme_url, data=theme_data, headers=header)
     theme_dict = json.loads(r_theme.text)
-    print(theme_dict)
+    # print(theme_dict)
     if theme_dict['errcode'] == 0 and groupId == -3:
         print('添加目录成功：',car['datasource'] )
 
@@ -205,7 +205,10 @@ def PostToWego(goods,tag2id):
         url = "https://upload.qiniup.com/"
         file_name = img.split('/')[-1]  # 文件名
         file_path = img#.replace('https','http')  # 文件路径
-        img_type = img.split('.')[-1]
+        if '.jpg' in img:
+            img_type = 'jpg'
+        else:
+            img_type = 'png'
 
         if 'http' in img:
             # try:
@@ -228,6 +231,7 @@ def PostToWego(goods,tag2id):
             img_2 = img_1.crop(crop_box)
             # img_2.show()
             temp_path = './data/temp1.' + img_type
+            img_2 = img_2.convert('RGB')
             img_2.save(temp_path)
         else:
             temp_path = img
@@ -286,7 +290,7 @@ def PostToWego(goods,tag2id):
     # print(r.text)
     print('上传商品成功：',goods['name'])
 
-def PostMain(json_path_list = ['./data/360che_ershoucar.json','./data/360che_newcar.json','./data/13che_ershoucar.json']):
+def PostMain(json_path_list = ['./data/360che_newcar.json','./data/360che_ershoucar.json','./data/13che_ershoucar.json']):
     # 流式分块取JSON 防止爆内存
     # json_path_list = ['./data/360che_ershoucar.json']
     try:
@@ -328,7 +332,8 @@ def PostMain(json_path_list = ['./data/360che_ershoucar.json','./data/360che_new
                         have_updated.add(car['url'])
                         if count%50 == 0:
                             save_obj(have_updated,'wego_have_updated')
-                    except:
+                    except Exception as e:
+                        print (e)
                         continue
                     count += 1
                 except StopIteration as e:

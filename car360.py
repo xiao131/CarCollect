@@ -102,6 +102,13 @@ def get_Newcar_Detail(car_list):
                 for i in range(1,len(tds)):
                     car_detail_dict[i][name] = tds[i].get_text().replace('\n','').strip()
 
+            html_content = GetHtmlCode(car['image_url'])
+            soup = BS(html_content, 'html.parser', from_encoding='utf-8')
+            divs = soup.find('div',class_ = 'cenboxtopnew2 gao').find_all('img')
+            car['image'] = []
+            for di in divs:
+                car['image'].append(di['src'])
+
             # print(car_detail_dict)
             car['detail'] = car_detail_dict
         except:
@@ -190,9 +197,13 @@ def get_Newcar_Url(page_end = 1,page_strat = 1):
                         car_detail['name'] = name
                         car_detail['品牌'] = name.split(' ')[0]
                         all_pingpai_set.add(car_detail['品牌'])
-                        img_path = car.find('img')['src']
-                        car_detail['image'] = [img_path]
+                        # img_path = car.find('img')['src']
+                        # car_detail['image'] = [img_path]
                         car_detail['datasource'] = '360-新车'
+                        other_links = car.find('div',class_='other-links').find_all('a')
+                        for links in other_links:
+                            if '图片' in links.get_text():
+                                car_detail['image_url'] = 'https://product.360che.com'+ quote(links['href'])
                         car_list.append(car_detail)
                     except:
                         pass
@@ -250,13 +261,6 @@ def Collect(city):
                 all_pingpai_set = load_obj('pingpai_set')
             except:
                 all_pingpai_set = set()
-            ershouche_list = get_Ershou_Url(city_code[city], page_strat=before_i, page_end=i)
-            ershouche_list = get_Ershou_Detail(ershouche_list)
-
-            ershoucar_path = './data/360che_ershoucar.json'
-            with open(ershoucar_path, 'a+', encoding='utf-8') as f:
-                f.write(json.dumps(ershouche_list, indent=4, ensure_ascii=False))
-            print("保存信息至：", ershoucar_path)
 
             car_list = get_Newcar_Url(page_strat=before_i, page_end=i)
             car_list = get_Newcar_Detail(car_list)
@@ -265,6 +269,16 @@ def Collect(city):
             with open(newcar_path, 'a+', encoding='utf-8') as f:
                 f.write(json.dumps(car_list, indent=4, ensure_ascii=False))
             print("保存信息至：", newcar_path)
+
+            ershouche_list = get_Ershou_Url(city_code[city], page_strat=before_i, page_end=i)
+            ershouche_list = get_Ershou_Detail(ershouche_list)
+
+            ershoucar_path = './data/360che_ershoucar.json'
+            with open(ershoucar_path, 'a+', encoding='utf-8') as f:
+                f.write(json.dumps(ershouche_list, indent=4, ensure_ascii=False))
+            print("保存信息至：", ershoucar_path)
+
+
 
             before_i = i
             save_obj(all_pingpai_set, 'pingpai_set')

@@ -120,7 +120,11 @@ def PostImage(image_list,token = None,esn = None):
     for img in image_list:
         file_name = img.split('/')[-1]  # 文件名
         file_path = img#.replace('https','http')  # 文件路径
-        img_type = img.split('.')[-1]
+        if '.jpg' in img:
+            img_type = 'jpg'
+        else:
+            img_type = 'png'
+
 
         # content = GetHtmlCode('https://v600api-pc.graspishop.com/apc/sys/about/generaterandomstring?count=1',header1)
         # print(header)
@@ -151,6 +155,7 @@ def PostImage(image_list,token = None,esn = None):
             img_2 = img_1.crop(crop_box)
             # img_2.show()
             temp_path = './data/temp1.' + img_type
+            img_2 = img_2.convert('RGB')
             img_2.save(temp_path)
         else:
             temp_path = img
