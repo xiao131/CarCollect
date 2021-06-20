@@ -330,7 +330,7 @@ def Collect(city):
             with open(car_path, 'a+', encoding='utf-8') as f:
                 f.write(json.dumps(car_list, indent=4, ensure_ascii=False))
             print("保存信息至：", car_path)
-            del car_list
+            car_list = []
             save_num = 0
 
             time.sleep(30)
