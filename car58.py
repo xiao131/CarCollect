@@ -221,7 +221,7 @@ def CollectSingle(car_link,Cookie):
 
     except Exception as e:
         print(e)
-        return False, car_single
+        return "error", car_single
 
 
 def Collect(city):
@@ -252,7 +252,10 @@ def Collect(city):
     save_num = 0 #保存计数
     for url_num in range(3):
         # 判断是否爬完
-        for page in tqdm(range(1, 1000)):
+        sta_page =1
+        if url_num == 0:
+            sta_page = 26
+        for page in tqdm(range(sta_page, 1000)):
             print("页数：", page)
             save_num += 1
 
@@ -307,15 +310,19 @@ def Collect(city):
                         else:
                             Cookie = Cookie2
                         tip, car_single = CollectSingle(car_link,Cookie)
-                        time.sleep(10)
+                        # time.sleep(10)
 
                         if tip == True:
                             car_list.append(car_single)
                             break
-
-                        if "访问频繁" in tip:
-                            print("访问频繁,暂停2分钟")
-                            time.sleep(120)
+                        elif tip == False:
+                            print("网络错误,暂停1分钟,请检查您的网络")
+                            time.sleep(60)
+                        elif tip == "error":
+                            print("error001")
+                        elif "访问频繁" in tip:
+                            print("访问频繁,暂停3分钟,请访问58同城进行验证，或者切换网络")
+                            time.sleep(180)
 
                         try_num += 1
                         if try_num > 5:
@@ -333,7 +340,7 @@ def Collect(city):
             car_list = []
             save_num = 0
 
-            time.sleep(30)
+            # time.sleep(20)
 
     # if save_num != 0:
     #     with open(car_path, 'a+', encoding='utf-8') as f:
