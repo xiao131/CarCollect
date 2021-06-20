@@ -223,6 +223,17 @@ def CollectSingle(car_link,Cookie):
         print(e)
         return "error", car_single
 
+def CollectPage(url_car,Cookie):
+    content_html = GetHtmlCode(url_car, Cookie)
+    if "请输入验证码" in content_html:
+        return False,None
+
+    # print(content_html)
+    soup = BeautifulSoup(content_html, "html.parser")
+
+    car_links = soup.find_all("div", class_="info--wrap")
+    # print(len(car_links))
+    return True,car_links
 
 def Collect(city):
     # 58同城 二手车
@@ -254,7 +265,9 @@ def Collect(city):
         # 判断是否爬完
         sta_page =1
         if url_num == 0:
-            sta_page = 26
+            sta_page = 71
+        elif url_num == sta_page:
+            sta_page = 7
         for page in tqdm(range(sta_page, 1000)):
             print("页数：", page)
             save_num += 1
@@ -290,14 +303,21 @@ def Collect(city):
             else:
                 Cookie = Cookie2
             try:
-                content_html = GetHtmlCode(url_car, Cookie)
-                # print(content_html)
-                soup = BeautifulSoup(content_html, "html.parser")
-
-                car_links = soup.find_all("div", class_="info--wrap")
-                print(len(car_links))
-                if len(car_links) == 0:
-                    break
+                try_page_num = 5
+                while(1):
+                    #获取每一页的详情链接
+                    is_success,car_links = CollectPage(url_car, Cookie)
+                    # print(len(car_links))
+                    if is_success:
+                        break
+                    if car_links == None:
+                        print("访问频繁,暂停2分钟,请进行验证")
+                        time.sleep(120)
+                    elif len(car_links) == 0:
+                        break
+                    try_page_num -= 1
+                    if try_page_num <= 0:
+                        break
                 url_num = 0
                 for car_link in car_links:
                     # 进入链接详情页，获取数据
