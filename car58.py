@@ -268,6 +268,8 @@ def Collect(city):
             sta_page = 71
         elif url_num == sta_page:
             sta_page = 7
+
+        is_end = False #是否是最后一页
         for page in tqdm(range(sta_page, 1000)):
             print("页数：", page)
             save_num += 1
@@ -311,13 +313,16 @@ def Collect(city):
                     if is_success:
                         break
                     if car_links == None:
-                        print("访问频繁,暂停2分钟,请进行验证")
+                        print("访问频繁,暂停2分钟,请进行验证,剩余重试次数：",try_num)
                         time.sleep(120)
                     elif len(car_links) == 0:
+                        is_end = True
                         break
                     try_page_num -= 1
                     if try_page_num <= 0:
                         break
+                if is_end == True:
+                    break
                 url_num = 0
                 for car_link in car_links:
                     # 进入链接详情页，获取数据
@@ -341,7 +346,7 @@ def Collect(city):
                         elif tip == "error":
                             print("error001")
                         elif "访问频繁" in tip:
-                            print("访问频繁,暂停3分钟,请访问58同城进行验证，或者切换网络")
+                            print("访问频繁,暂停3分钟,请访问58同城进行验证，或者切换网络，已重试：",try_num)
                             time.sleep(180)
 
                         try_num += 1
