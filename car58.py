@@ -11,8 +11,8 @@ import json
 def GetHtmlCode(url,Cookie,try_num=0):
     headers = {
         "user-agent": "Mozilla/5.0 (iPad; CPU OS 11_0 like Mac OS X) AppleWebKit/604.1.34 (KHTML, like Gecko) Version/11.0 Mobile/15A5341f Safari/604.1",
-        "Cookie": Cookie,
-        "Content-Type": "application/x-www-form-urlencoded"}
+        "Cookie": Cookie,}
+        #"Content-Type": "application/x-www-form-urlencoded"}
     try:
         req = requests.get(url, headers=headers)
     except Exception as e:
@@ -129,6 +129,101 @@ def getPinyin(string):
         charLst.append(single_get_first(l))
     return ''.join(charLst)
 
+def CollectSingle(car_link,Cookie):
+    try:
+        # 单条车信息
+        car_single = {}
+
+        car_link = car_link.find("a", target="_blank")
+        #print(car_link["href"])
+        url_info = car_link["href"]
+
+        data_html = GetHtmlCode(url_info, Cookie)
+        if "请输入验证码" in data_html:
+            return "访问频繁",None
+        if data_html == None:
+            return False,None
+        # print(data_html)
+
+        data_html = convertNumber(data_html)
+        data_html = BeautifulSoup(data_html, "html.parser")
+
+        title = data_html.find("h1", class_="info-title").text
+        print("名称：", title)
+        brand = title.split(" ")
+        if len(brand) == 1:
+            brand = "其他"
+        else:
+            brand = brand[0]
+        #print("品牌：", brand)
+        # price
+        pattern = re.compile(r'____json4fe = {.*}')  # 查找数字
+        result = pattern.findall(str(data_html))
+        if len(result) > 0:
+            result = result[0][14:]
+            # print(result)
+            result = result.replace("null", "None")
+            result = result.replace("true", "True")
+            result = result.replace("false", "False")
+            result = eval(result)
+
+        # print("车类型：", car_type)
+        area = result["locallist"][0]["name"]
+        print("地区：", area)
+        seller_name = result["linkman"]
+        print("卖家信息：", seller_name)
+        phone = None
+        # phone_url = "https://chephone.58.com/api/detail/phone/get/"+str(result["infoid"])+\
+        #         "?clientType="+str(result["rootcatentry"]["dispid"])+"&action=getVC&callback=jQuery18009104542058383776_1621689580910&_=1621690800162"
+        # print(phone_url)
+        # 车辆信息
+
+        price = None
+        price_num = data_html.find("em", class_="info-price_usedcar strongbox").text
+        price_unit = data_html.find("b", class_="info-price_unit").text
+        price_num = price_num.replace("\n", "")
+        price = price_num + price_unit
+        print("价格：", price)
+
+        desc = data_html.find("dd", class_="info-usr-desc_cont").text
+        desc = desc.replace("\n", "")
+        desc = desc.replace(" ", "")
+        #print("描述：", desc)
+
+        # 图片列表
+        img_list = []
+        imgs = data_html.find("div", class_="info-pics h-clearfix")
+        imgs = imgs.find_all("img")
+        for img in imgs:
+            img_url = img["data-original"]
+            img_url = img_url.split("?")[0]
+            img_list.append(img_url)
+        #print("图片列表：", img_list)
+
+        car_single["url"] = url_info
+        car_single["name"] = title
+        car_single["info"] = desc
+        car_single["price"] = price
+        car_single["image"] = img_list
+        car_single["品牌"] = brand
+
+        car_info = {}
+        car_info_html = data_html.find("dl", class_="info-conf")
+        car_info_html = car_info_html.find_all("dd")
+        for c in car_info_html:
+            label = c.find("span", class_="info-conf_label").text
+            value = c.find("span", class_="info-conf_value").text
+            car_info[label] = value
+            car_single[label] = value
+        #print("车信息：", car_info)
+
+        return True, car_single
+
+    except Exception as e:
+        print(e)
+        return False, car_single
+
+
 def Collect(city):
     # 58同城 二手车
     Cookie1 = 'f=n; commontopbar_new_city_info=8728%7C%E5%85%A8%E5%9B%BD%7Cquanguo; f=n; commontopbar_new_city_info=8728%7C%E5%85%A8%E5%9B%BD%7Cquanguo; commontopbar_ipcity=wx%7C%E6%97%A0%E9%94%A1%7C0; time_create=1624258576157; userid360_xml=1C6F7C345E3BF67FEACA7781B6403670; fzq_h=b7ce8b1d7996bf6f4ba538769e61c338_1621665244296_42fc8daac9b34a4b9d86962a5c4e44bc_826441976; sessionid=60893154-450a-4238-8c3c-7a8a96ac35df; id58=c5/nfGCopdwHv6MSL2U7Ag==; 58tj_uuid=d86b5da3-47de-44cf-8d2c-35bacd80a043; wmda_uuid=63d09f4faf599c46f69f7f4dda571ac2; wmda_new_uuid=1; als=0; f=n; gr_user_id=0bfe92c5-5988-4a62-8f77-27a732c42e83; wmda_visited_projects=%3B1732038237441%3B11187958619315; xxzl_deviceid=jpM3DraNrxoxJPMSRi9Qr%2B6wCtJrxpcGj4%2BJ0AqLZqbw%2BTOHPaWowsG%2FVjOIscz6; wmda_session_id_1732038237441=1621687253811-8fe8cedb-763f-d82a; new_uv=4; utm_source=; spm=; init_refer=https%253A%252F%252Fquanguo.58.com%252Fershouche%252F; new_session=0; 58home=wx; city=wx; xxzl_cid=4aa405d2705148d48f0768b73ade5fb4; xzuid=16995c85-c03e-4e53-acd8-4bfdebf62ce4; wmda_session_id_11187958619315=1621688608289-d998f213-aace-b2be; ppStore_fingerprint=82074AF4EFA67B19FB0FBF0CED178E5795345BA0728E59B3%EF%BC%BF1621688673015; gr_session_id_b26c1cbc59d303d8=d99c07d1-8719-4232-80a2-69b378288d65; gr_session_id_b26c1cbc59d303d8_d99c07d1-8719-4232-80a2-69b378288d65=true; xxzl_token="qReyCkomHGAWHQOXB+IJGQElnVs3BOtXRHmBFcqxp15HJihMMVtvKyCh4a6wxnTNin35brBb//eSODvMgkQULA=="; xxzl_sid="undefined"; fzq_js_usdt_infolist_car=61cece06e5616a992826979d319a9ba8_1621688936195_6'
@@ -202,130 +297,49 @@ def Collect(city):
                     break
                 url_num = 0
                 for car_link in car_links:
-                    try:
-                        #单条车信息
-                        car_single = {}
-
-                        car_link = car_link.find("a", target="_blank")
-                        print(car_link["href"])
-                        url_info = car_link["href"]
-
-                        # 进入链接详情页，获取数据
+                    # 进入链接详情页，获取数据
+                    try_num = 0 #重试次数\
+                    is_continue = False
+                    while(1):
                         url_num += 1
                         if url_num % 2 == 1:
                             Cookie = Cookie1
                         else:
                             Cookie = Cookie2
-                        data_html = GetHtmlCode(url_info, Cookie)
-                        if "请输入验证码" in data_html:
-                            if url_num % 2 == 1:
-                                Cookie = Cookie2
-                            else:
-                                Cookie = Cookie1
-                            data_html = GetHtmlCode(url_info, Cookie)
-                            if "请输入验证码" in data_html:
-                                print("访问频繁，需要输入验证码")
-                                time.sleep(1800)
-                                data_html = GetHtmlCode(url_info, Cookie)
-                        if data_html == None:
-                            continue
-                        # print(data_html)
+                        tip, car_single = CollectSingle(car_link,Cookie)
+                        time.sleep(10)
 
-                        data_html = convertNumber(data_html)
-                        data_html = BeautifulSoup(data_html, "html.parser")
+                        if tip == True:
+                            car_list.append(car_single)
+                            break
 
-                        title = data_html.find("h1", class_="info-title").text
-                        print("名称：", title)
-                        brand = title.split(" ")
-                        if len(brand) == 1:
-                            brand = "其他"
-                        else:
-                            brand = brand[0]
-                        print("品牌：", brand)
-                        # price
-                        pattern = re.compile(r'____json4fe = {.*}')  # 查找数字
-                        result = pattern.findall(str(data_html))
-                        if len(result) > 0:
-                            result = result[0][14:]
-                            # print(result)
-                            result = result.replace("null", "None")
-                            result = result.replace("true", "True")
-                            result = result.replace("false", "False")
-                            result = eval(result)
+                        if "访问频繁" in tip:
+                            print("访问频繁,暂停2分钟")
+                            time.sleep(120)
 
-                        print("车类型：", car_type)
-                        area = result["locallist"][0]["name"]
-                        print("地区：", area)
-                        seller_name = result["linkman"]
-                        print("卖家信息：", seller_name)
-                        phone = None
-                        # phone_url = "https://chephone.58.com/api/detail/phone/get/"+str(result["infoid"])+\
-                        #         "?clientType="+str(result["rootcatentry"]["dispid"])+"&action=getVC&callback=jQuery18009104542058383776_1621689580910&_=1621690800162"
-                        # print(phone_url)
-                        # 车辆信息
+                        try_num += 1
+                        if try_num > 5:
+                            print("重试5次后未获取数据")
+                            break
 
-                        price = None
-                        price_num = data_html.find("em", class_="info-price_usedcar strongbox").text
-                        price_unit = data_html.find("b", class_="info-price_unit").text
-                        price_num = price_num.replace("\n", "")
-                        price = price_num + price_unit
-                        print("价格：", price)
-
-                        desc = data_html.find("dd", class_="info-usr-desc_cont").text
-                        desc = desc.replace("\n", "")
-                        desc = desc.replace(" ", "")
-                        print("描述：", desc)
-
-                        # 图片列表
-                        img_list = []
-                        imgs = data_html.find("div", class_="info-pics h-clearfix")
-                        imgs = imgs.find_all("img")
-                        for img in imgs:
-                            img_url = img["data-original"]
-                            img_url = img_url.split("?")[0]
-                            img_list.append(img_url)
-                        print("图片列表：", img_list)
-
-                        car_single["url"] = url_info
-                        car_single["name"] = title
-                        car_single["info"] = desc
-                        car_single["price"] = price
-                        car_single["image"] = img_list
-                        car_single["品牌"] = brand
-
-                        car_info = {}
-                        car_info_html = data_html.find("dl", class_="info-conf")
-                        car_info_html = car_info_html.find_all("dd")
-                        for c in car_info_html:
-                            label = c.find("span", class_="info-conf_label").text
-                            value = c.find("span", class_="info-conf_value").text
-                            car_info[label] = value
-                            car_single[label] = value
-                        print("车信息：", car_info)
-
-                        car_list.append(car_single)
-
-                        time.sleep(180)
-                    except Exception as e:
-                        print(e)
             except Exception as e:
                 print(e)
 
-            #每10页保存一次
-            if save_num % 10 == 0:
-                with open(car_path, 'a+', encoding='utf-8') as f:
-                    f.write(json.dumps(car_list, indent=4, ensure_ascii=False))
-                print("保存信息至：", car_path)
-                del car_list
-                save_num = 0
+            #每页保存一次
+            # if save_num % 2 == 0:
+            with open(car_path, 'a+', encoding='utf-8') as f:
+                f.write(json.dumps(car_list, indent=4, ensure_ascii=False))
+            print("保存信息至：", car_path)
+            del car_list
+            save_num = 0
 
-            time.sleep(360)
+            time.sleep(30)
 
-    if save_num != 0:
-        with open(car_path, 'a+', encoding='utf-8') as f:
-            f.write(json.dumps(car_list, indent=4, ensure_ascii=False))
-        print("保存信息至：", car_path)
-        del car_list
+    # if save_num != 0:
+    #     with open(car_path, 'a+', encoding='utf-8') as f:
+    #         f.write(json.dumps(car_list, indent=4, ensure_ascii=False))
+    #     print("保存信息至：", car_path)
+    #     del car_list
 
 if __name__ == '__main__':
     # Collect()
