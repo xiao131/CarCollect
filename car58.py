@@ -264,13 +264,13 @@ def Collect(city):
     for url_num in range(3):
         # 判断是否爬完
         sta_page =1
-        if url_num == 0:
-            sta_page = 71
-        elif url_num == sta_page:
-            sta_page = 7
+        # if url_num == 0:
+        #     sta_page = 71
+        # elif url_num == sta_page:
+        #     sta_page = 7
 
         is_end = False #是否是最后一页
-        for page in tqdm(range(sta_page, 1000)):
+        for page in tqdm(range(1, 100)):
             print("页数：", page)
             save_num += 1
 
@@ -311,26 +311,26 @@ def Collect(city):
                     is_success,car_links = CollectPage(url_car, Cookie)
                     # print(len(car_links))
                     if is_success:
+                        if len(car_links) == 0:
+                            is_end = True
+                            print("当前页面无数据")
                         break
                     if car_links == None:
-                        print("访问频繁,暂停2分钟,请进行验证,剩余重试次数：",try_num)
+                        print("访问频繁,暂停2分钟,请进行验证,剩余重试次数：",try_page_num)
                         time.sleep(120)
-                    elif len(car_links) == 0:
-                        is_end = True
+
                         break
                     try_page_num -= 1
                     if try_page_num <= 0:
                         break
-                if is_end == True:
-                    break
-                url_num = 0
+                cookie_num = 0
                 for car_link in car_links:
                     # 进入链接详情页，获取数据
                     try_num = 0 #重试次数\
                     is_continue = False
                     while(1):
-                        url_num += 1
-                        if url_num % 2 == 1:
+                        cookie_num += 1
+                        if cookie_num % 2 == 1:
                             Cookie = Cookie1
                         else:
                             Cookie = Cookie2
@@ -356,7 +356,8 @@ def Collect(city):
 
             except Exception as e:
                 print(e)
-
+            if is_end == True:
+                break
             #每页保存一次
             # if save_num % 2 == 0:
             with open(car_path, 'a+', encoding='utf-8') as f:
