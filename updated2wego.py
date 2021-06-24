@@ -303,44 +303,44 @@ def PostMain(json_path_list = ['./data/360che_newcar.json','./data/360che_ershou
             objects = ijson.items(f, 'item',multiple_values=True)
             # 这个objects在这里就是相当于一个生成器，可以调用next函数取它的下一个值
             while True:
+                # try:
+                car = objects.__next__()
+                #生成配置图
+                GetDetailImage(car['image'][0],car)
+                car['image'].insert(0,"./data/bg.jpg")
+
+                if car['url'] in have_updated:
+                    continue
+                if '360che_ershoucar' in json_path:
+                    car['datasource'] = '360-二手车'
+                elif '360che_newcar' in json_path:
+                    car['datasource'] = '360-新车'
+                elif '13che_newcar' in json_path:
+                    car['datasource'] = '13-新车'
+                elif '13che_ershoucar' in json_path:
+                    car['datasource'] = '13-二手车'
+
+                # print(car)
                 try:
-                    car = objects.__next__()
-                    #生成配置图
-                    GetDetailImage(car['image'][0],car)
-                    car['image'].insert(0,"./data/bg.jpg")
-
-                    if car['url'] in have_updated:
-                        continue
-                    if '360che_ershoucar' in json_path:
-                        car['datasource'] = '360-二手车'
-                    elif '360che_newcar' in json_path:
-                        car['datasource'] = '360-新车'
-                    elif '13che_newcar' in json_path:
-                        car['datasource'] = '13-新车'
-                    elif '13che_ershoucar' in json_path:
-                        car['datasource'] = '13-二手车'
-
-                    # print(car)
-                    try:
-                        car['label'] = car['datasource']+'-'+car['品牌']
-                    except:
-                        continue
-                    # try:
-                    tag2id = CreateTag(car)
-                    PostToWego(car, tag2id)
-
-                    have_updated.add(car['url'])
-                    if count%50 == 0:
-                        save_obj(have_updated,'wego_have_updated')
-                    # except Exception as e:
-                    #     print (e)
-                    #     continue
-                    count += 1
-                except StopIteration as e:
-                    print("数据读取完成")
-                    break
+                    car['label'] = car['datasource']+'-'+car['品牌']
                 except:
                     continue
+                # try:
+                tag2id = CreateTag(car)
+                PostToWego(car, tag2id)
+
+                have_updated.add(car['url'])
+                if count%50 == 0:
+                    save_obj(have_updated,'wego_have_updated')
+                # except Exception as e:
+                #     print (e)
+                #     continue
+                count += 1
+                # except StopIteration as e:
+                #     print("数据读取完成")
+                #     break
+                # except:
+                #     continue
     save_obj(have_updated, 'wego_have_updated')
 
 if __name__ == "__main__":
