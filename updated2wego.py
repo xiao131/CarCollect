@@ -325,16 +325,16 @@ def PostMain(json_path_list = ['./data/360che_newcar.json','./data/360che_ershou
                         car['label'] = car['datasource']+'-'+car['品牌']
                     except:
                         continue
-                    try:
-                        tag2id = CreateTag(car)
-                        PostToWego(car, tag2id)
+                    # try:
+                    tag2id = CreateTag(car)
+                    PostToWego(car, tag2id)
 
-                        have_updated.add(car['url'])
-                        if count%50 == 0:
-                            save_obj(have_updated,'wego_have_updated')
-                    except Exception as e:
-                        print (e)
-                        continue
+                    have_updated.add(car['url'])
+                    if count%50 == 0:
+                        save_obj(have_updated,'wego_have_updated')
+                    # except Exception as e:
+                    #     print (e)
+                    #     continue
                     count += 1
                 except StopIteration as e:
                     print("数据读取完成")
