@@ -90,7 +90,7 @@ def CreateTag(car):
 
     # theme_detail = get(url=theme_detail_url, headers=header)
     theme_detail = GetHtmlCode(theme_detail_url,header_get)
-    theme_detail = json.loads(theme_detail)
+    theme_detail = json.loads(theme_detail.decode())
     # for data_from,cat_set in all_cat.items():
         # 先找是否存在该目录获取ID
     exist_groups =  theme_detail['result']['groups']
