@@ -53,7 +53,7 @@ def GetHtmlCode(url,headers):
     #     return None
     # content_html = file.read()
     # print(content_html.decode('utf8'))  # 解码
-    return content_html
+    return content_html.decode('utf8')
 
 
 # 创建标签
@@ -90,7 +90,7 @@ def CreateTag(car):
 
     # theme_detail = get(url=theme_detail_url, headers=header)
     theme_detail = GetHtmlCode(theme_detail_url,header_get)
-    theme_detail = json.loads(theme_detail.decode())
+    theme_detail = json.loads(theme_detail)
     # for data_from,cat_set in all_cat.items():
         # 先找是否存在该目录获取ID
     exist_groups =  theme_detail['result']['groups']
@@ -248,14 +248,14 @@ def PostToWego(goods,tag2id):
 
 
         # update token
-        uptoken = json.loads(get('https://www.szwego.com/service/get_qiuniu_token.jsp').text.decode())['uptoken']
+        uptoken = json.loads(get('https://www.szwego.com/service/get_qiuniu_token.jsp').text)['uptoken']
         data = {
             "token": uptoken}
         res = requests.request("POST", url, data=data, files=files)
         # print(res.status_code)
         # print(res.text)
         xcimg_url = 'https://xcimg.szwego.com/'
-        main_imgs+=quote('"'+xcimg_url+json.loads(res.text.decode())['key']+'",')
+        main_imgs+=quote('"'+xcimg_url+json.loads(res.text)['key']+'",')
     main_imgs = main_imgs[:-3]+']'
         # pass
     tags = '&tags=[{"tagId":'+quote(str(tag2id[goods['label']]))+',"tagName":'+quote('"'+goods['label'])+'"}]'
