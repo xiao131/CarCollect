@@ -248,14 +248,14 @@ def PostToWego(goods,tag2id):
 
 
         # update token
-        uptoken = json.loads(get('https://www.szwego.com/service/get_qiuniu_token.jsp').text)['uptoken']
+        uptoken = json.loads(get('https://www.szwego.com/service/get_qiuniu_token.jsp').text.decode())['uptoken']
         data = {
             "token": uptoken}
         res = requests.request("POST", url, data=data, files=files)
         # print(res.status_code)
         # print(res.text)
         xcimg_url = 'https://xcimg.szwego.com/'
-        main_imgs+=quote('"'+xcimg_url+json.loads(res.text)['key']+'",')
+        main_imgs+=quote('"'+xcimg_url+json.loads(res.text.decode())['key']+'",')
     main_imgs = main_imgs[:-3]+']'
         # pass
     tags = '&tags=[{"tagId":'+quote(str(tag2id[goods['label']]))+',"tagName":'+quote('"'+goods['label'])+'"}]'
