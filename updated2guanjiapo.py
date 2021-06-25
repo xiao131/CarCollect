@@ -117,6 +117,9 @@ def PostImage(image_list,token = None,esn = None):
                ('Content-Type', 'application/json')
                ]
     image_name_list = []
+    requests.adapters.DEFAULT_RETRIES = 5  # 增加重连次数
+    s = requests.session()
+    s.keep_alive = False  # 关闭多余连接
     for img in image_list:
         file_name = img.split('/')[-1]  # 文件名
         file_path = img#.replace('https','http')  # 文件路径
@@ -128,7 +131,7 @@ def PostImage(image_list,token = None,esn = None):
 
         # content = GetHtmlCode('https://v600api-pc.graspishop.com/apc/sys/about/generaterandomstring?count=1',header1)
         # print(header)
-        rand_cont = requests.get('https://v600api-pc.graspishop.com/apc/sys/about/generaterandomstring?count=1',headers = header).text
+        rand_cont = s.get('https://v600api-pc.graspishop.com/apc/sys/about/generaterandomstring?count=1',headers = header).text
         # print(rand_cont)
         img_name = json.loads(rand_cont)['RetObject'][0]
         img_name =  "{}.{}".format(img_name, img_type)
@@ -141,7 +144,8 @@ def PostImage(image_list,token = None,esn = None):
             Hostreferer = {
                 'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3440.106 Safari/537.36'
             }
-            html = requests.get(img, headers=Hostreferer)
+
+            html = s.get(img, headers=Hostreferer)
             temp_path = './data/temp.' + img_type
             f = open(temp_path, 'wb')
             f.write(html.content)
@@ -177,7 +181,7 @@ def PostImage(image_list,token = None,esn = None):
         image_name_list.append(Img_dict1)
 
 
-        get_oss_policy = json.loads(requests.get('https://v600api-pc.graspishop.com/apc/BaseInfo/Goods/GetOssPolicy',headers = header).text)
+        get_oss_policy = json.loads(s.get('https://v600api-pc.graspishop.com/apc/BaseInfo/Goods/GetOssPolicy',headers = header).text)
         need_policy = get_oss_policy['RetObject']['Policy']
         need_OSSAccessKeyId = get_oss_policy['RetObject']['AccessID']
         need_signature = get_oss_policy['RetObject']['Signature']
@@ -189,7 +193,7 @@ def PostImage(image_list,token = None,esn = None):
 
                      }
         # post_data = 'key={}&policy={}&OSSAccessKeyId={}&success_action_status=200&signature={}'.format(need_key,need_policy,need_OSSAccessKeyId,need_signature)
-        res = requests.request("POST", post_image_url, data=post_data, files=files,headers = header)
+        res = s.request("POST", post_image_url, data=post_data, files=files,headers = header)
         # print(res.text)
     return image_name_list
 # 上传数据
@@ -208,6 +212,8 @@ def PostToGuanjiapo(goods,token = None,esn = None):
               'esn':esn
               }
     # for goods in goods_data:
+    if 'info' not in goods.keys():
+        goods['info'] = goods['name']
     info = goods['info']+' 参考价：'
     if 'price' not in goods.keys():
         info += '价格私聊'
@@ -306,10 +312,10 @@ def main(json_path_list = ['./data/360che_ershoucar.json','./data/360che_newcar.
                     # 生成配置图
                     GetDetailImage(car['image'][0], car)
                     car['image'].insert(0, "./data/bg.jpg")
-                    print(car['name'])
+
                     if car['url'] in have_updated:
                         continue
-
+                    print(car['name'])
                     if '360che_ershoucar' in json_path:
                         car['datasource'] = '360-二手车'
                         car['classid'] = '1017'
