@@ -9,6 +9,9 @@ import car58
 import car360
 from updated2wego import PostMain as WegoPost
 from updated2guanjiapo import main as GuanjiapoPost
+from updated2wego import DeleteTag as DeleteWegoTag
+from updated2wego import DeleteAllGoods as DeleteWegoGoods
+from updated2guanjiapo import DeleteAllGoods as DeleteGuanjiapoGoods
 
 #采集数据线程
 class CollectThread(Thread):
@@ -74,7 +77,7 @@ class UpdatePriceThread(Thread):
                     Data_List[i]["sku_list"][j]["goods_price"] = price_temp
         wx.CallAfter(pub.sendMessage, "update", msg="accept_price")
 
-#上传数据线程
+#上传和删除数据线程
 class UpDataThread(Thread):
     def __init__(self,select_num,update_type):
         #线程实例化时立即启动
@@ -110,13 +113,20 @@ class UpDataThread(Thread):
                 WegoPost(json_path_list)
             else:
                 GuanjiapoPost(json_path_list)
+        elif self.select == 3:
+            DeleteWegoTag()
+        elif self.select == 4:
+            DeleteWegoGoods()
+        elif self.select == 5:
+            DeleteGuanjiapoGoods()
+
 
         wx.CallAfter(pub.sendMessage, "update", msg="accept_up")
 
 class Car(wx.Frame):
     def __init__(self, parent):
-        wx.Frame.__init__(self, parent, id=wx.ID_ANY, title = u"二手车采集 V1.1.8", pos=wx.DefaultPosition,
-                          size=wx.Size(540, 170), style=wx.DEFAULT_FRAME_STYLE | wx.TAB_TRAVERSAL)
+        wx.Frame.__init__(self, parent, id=wx.ID_ANY, title = u"二手车采集 V1.2.0", pos=wx.DefaultPosition,
+                          size=wx.Size(540, 200), style=wx.DEFAULT_FRAME_STYLE | wx.TAB_TRAVERSAL)
 
         self.SetSizeHints(wx.DefaultSize, wx.DefaultSize)
 
@@ -186,6 +196,20 @@ class Car(wx.Frame):
 
         bSizer1.Add(bSizer5, 0, wx.ALIGN_CENTER | wx.EXPAND | wx.SHAPED, 5)
 
+        bSizer6 = wx.BoxSizer(wx.HORIZONTAL)
+
+        self.m_button8 = wx.Button(self, wx.ID_ANY, u"删除微商相册标签", wx.DefaultPosition, wx.Size(170, -1), 0)
+        bSizer6.Add(self.m_button8, 0, wx.ALL, 5)
+
+        self.m_button9 = wx.Button(self, wx.ID_ANY, u"删除微商相册商品", wx.DefaultPosition, wx.Size(170, -1), 0)
+        bSizer6.Add(self.m_button9, 0, wx.ALL, 5)
+
+        self.m_button10 = wx.Button(self, wx.ID_ANY, u"删除管家婆商品", wx.DefaultPosition, wx.Size(170, -1), 0)
+        bSizer6.Add(self.m_button10, 0, wx.ALL, 5)
+
+        bSizer1.Add(bSizer6, 0, wx.ALIGN_CENTER | wx.EXPAND | wx.SHAPED, 5)
+
+
         self.SetSizer(bSizer1)
         self.Layout()
 
@@ -196,6 +220,9 @@ class Car(wx.Frame):
         self.m_button5.Bind(wx.EVT_BUTTON, self.GetImage)
         self.m_button6.Bind(wx.EVT_BUTTON, self.UpData)
         self.m_button7.Bind(wx.EVT_BUTTON, self.UpData_Guanjiapo)
+        self.m_button8.Bind(wx.EVT_BUTTON, self.Delete_Wego_Tag)
+        self.m_button9.Bind(wx.EVT_BUTTON, self.Delete_Wego_Goods)
+        self.m_button10.Bind(wx.EVT_BUTTON, self.Delete_Guanjiapo_Goods)
 
         pub.subscribe(self.updateDisplay, "update")
 
@@ -217,6 +244,9 @@ class Car(wx.Frame):
         self.m_button5.Enable()
         self.m_button6.Enable()
         self.m_button7.Enable()
+        self.m_button8.Enable()
+        self.m_button9.Enable()
+        self.m_button10.Enable()
 
     #关闭所有按钮
     def ColseAllButton(self):
@@ -225,6 +255,9 @@ class Car(wx.Frame):
         self.m_button5.Enable(False)
         self.m_button6.Enable(False)
         self.m_button7.Enable(False)
+        self.m_button8.Enable(False)
+        self.m_button9.Enable(False)
+        self.m_button10.Enable(False)
 
     # 进程完成后更新显示信息
     def updateDisplay(self, msg):
@@ -241,9 +274,10 @@ class Car(wx.Frame):
             # 将按钮重新开启
             self.EnableAllButton()
         elif t == "accept_up":
-            wx.MessageBox("上传商品已经成功完成！", "完成消息", wx.OK | wx.YES_DEFAULT)
+            wx.MessageBox("上传或删除商品已经成功完成！", "完成消息", wx.OK | wx.YES_DEFAULT)
             # 将按钮重新开启
             self.EnableAllButton()
+
 
     def Collect(self,event):
         #多线程
@@ -325,6 +359,20 @@ class Car(wx.Frame):
         # 将按钮设置为禁用
         self.ColseAllButton()
 
+    def Delete_Wego_Tag(self,event):
+        UpDataThread(3,'微商相册')
+        # 将按钮设置为禁用
+        self.ColseAllButton()
+
+    def Delete_Wego_Goods(self,event):
+        UpDataThread(4,'微商相册')
+        # 将按钮设置为禁用
+        self.ColseAllButton()
+
+    def Delete_Guanjiapo_Goods(self,event):
+        UpDataThread(5,'管家婆')
+        # 将按钮设置为禁用
+        self.ColseAllButton()
 
 
 if __name__ == '__main__':

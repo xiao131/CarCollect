@@ -104,11 +104,22 @@ def get_Newcar_Detail(car_list):
 
             html_content = GetHtmlCode(car['image_url'])
             soup = BS(html_content, 'html.parser', from_encoding='utf-8')
-            divs = soup.find('div',class_ = 'cenboxtopnew2 gao').find_all('img')
-            car['image'] = []
-            for di in divs:
-                car['image'].append(di['src'])
+            img_href = soup.find('div',class_ = 'cenboxtopnew2 gao').find('a')['href']
+            img_href = 'https://product.360che.com' + quote(img_href)
 
+            html_content = GetHtmlCode(img_href)
+            img_soup = BS(html_content, 'html.parser', from_encoding='utf-8')
+
+            divs = img_soup.find('div',class_ = 'imgname_b_cent').find_all('img')
+
+
+            car['image'] = []
+            img_count = 0
+            for di in divs:
+                car['image'].append(di['src'].replace('240x160','800x533'))
+                img_count+=1
+                if img_count>=9:
+                    break
             # print(car_detail_dict)
             car['detail'] = car_detail_dict
         except:
@@ -267,7 +278,7 @@ def Collect(city):
 
             newcar_path = './data/360che_newcar.json'
             with open(newcar_path, 'a+', encoding='utf-8') as f:
-                f.write(json.dumps(car_list, indent=4, ensure_ascii=False))
+                f.write(json.dumps(car_list, indent=2, ensure_ascii=False))
             print("保存信息至：", newcar_path)
 
             ershouche_list = get_Ershou_Url(city_code[city], page_strat=before_i, page_end=i)
@@ -275,7 +286,7 @@ def Collect(city):
 
             ershoucar_path = './data/360che_ershoucar.json'
             with open(ershoucar_path, 'a+', encoding='utf-8') as f:
-                f.write(json.dumps(ershouche_list, indent=4, ensure_ascii=False))
+                f.write(json.dumps(ershouche_list, indent=2, ensure_ascii=False))
             print("保存信息至：", ershoucar_path)
 
 
