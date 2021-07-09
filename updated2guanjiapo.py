@@ -214,7 +214,7 @@ def PostToGuanjiapo(goods,token = None,esn = None):
     # for goods in goods_data:
     if 'info' not in goods.keys():
         goods['info'] = goods['name']
-    info = goods['info']+' 参考价：'
+    info = goods['info']+quote(' ' + goods['url'].split('.com')[-1].split('.')[0])+' 参考价：'
     if 'price' not in goods.keys():
         info += '价格私聊'
     else:
@@ -268,6 +268,7 @@ def PostToGuanjiapo(goods,token = None,esn = None):
     # print(r.text)
     # print(r.text)
     print('上传商品成功：',goods['name'])
+    return format_dict['RetObject']['ID']
 
 def login(username):
     header = {'accept': '*/*',
@@ -290,6 +291,30 @@ def login(username):
     else:
         return None,esn
 
+def DeleteAllGoods():
+    token, esn = login('18620241959')
+    check_url = 'https://v610api-pc.graspishop.com/apc/BaseInfo/Goods/CanRemoves?goodsids='
+    delete_url = 'https://v610api-pc.graspishop.com/APC/BaseInfo/Goods/BatchRemove'
+    header = {'Accept': '*/*',
+              'Accept-Encoding': 'gzip, deflate, br',
+              'Accept-Language': 'zh-CN,zh;q=0.9,en-US;q=0.8,en;q=0.7',
+              'Connection': 'keep-alive',
+              'client-src':'pcweb',
+              'Content-Type': 'application/json',
+              'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.61 Safari/537.36',
+              'token':token,
+              'esn':esn
+              }
+    goods_id = load_obj('guanjiapo_goods_id')
+    goods_id = [str(i) for i in goods_id]
+    id_str = ",".join(goods_id)
+    r = get(check_url+id_str, headers=header)
+    format_dict = json.loads(r.text)
+    suc_id = format_dict['RetObject']['suc']
+    suc_id = [str(i) for i in suc_id]
+    r = post(delete_url, data='{"goodsid":"'+",".join(suc_id)+'"}', headers=header)
+    print(r.text)
+
 
 def main(json_path_list = ['./data/360che_ershoucar.json','./data/360che_newcar.json','./data/13che_ershoucar.json']):
     token, esn = login('18620241959')
@@ -299,8 +324,10 @@ def main(json_path_list = ['./data/360che_ershoucar.json','./data/360che_newcar.
 
     try:
         have_updated = load_obj('guanjiapo_have_updated')
+        guanjiapo_goods_id = load_obj('guanjiapo_goods_id')
     except:
         have_updated = set()
+        guanjiapo_goods_id = []
     count = 1
     for json_path in json_path_list:
         with open(json_path, 'r', encoding='utf-8') as f:
@@ -334,11 +361,12 @@ def main(json_path_list = ['./data/360che_ershoucar.json','./data/360che_newcar.
                     except:
                         continue
                     try:
-                        PostToGuanjiapo(car,token, esn )
-
+                        post_ID = PostToGuanjiapo(car,token, esn )
+                        guanjiapo_goods_id.append(str(post_ID))
                         have_updated.add(car['url'])
                         if count%50 == 0:
                             save_obj(have_updated,'guanjiapo_have_updated')
+                            save_obj(guanjiapo_goods_id,'guanjiapo_goods_id')
                     except:
                         continue
                     count += 1
@@ -353,4 +381,6 @@ def main(json_path_list = ['./data/360che_ershoucar.json','./data/360che_newcar.
 
 if __name__ == "__main__":
     # main()
+    # token, esn = login('18620241959')
+    # DeleteAllGoods(token, esn)
     pass

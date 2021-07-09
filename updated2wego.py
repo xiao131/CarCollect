@@ -6,6 +6,7 @@ from urllib import error
 # from xlwt import Workbook
 # from pathlib import Path
 # from os import makedirs
+from tqdm import tqdm
 from PIL import Image
 
 import ijson
@@ -193,7 +194,7 @@ def PostToWego(goods,tag2id):
               'X-Requested-With': 'XMLHttpRequest'}
     # for goods in goods_data:
     id = 'id='
-    title = '&title='+quote(goods['name'])+quote(' 参考价：')
+    title = '&title='+quote(goods['name'])+quote(' ' + goods['url'].split('.com')[-1].split('.')[0])+quote(' 参考价：')
     if 'price' not in goods.keys():
         title += quote('价格私聊')
     else:
@@ -290,6 +291,61 @@ def PostToWego(goods,tag2id):
     # print(r.text)
     print('上传商品成功：',goods['name'])
 
+
+def DeleteTag():
+    delete_url = 'https://www.szwego.com/service/album/album_theme_tag_operation.jsp?act=del'
+    header = {'Accept': 'application/json, text/javascript, */*;q=0.01',
+              'Accept-Encoding': 'gzip, deflate, br',
+              'Accept-Language': 'zh-CN,zh;q=0.9,en-US;q=0.8,en;q=0.7',
+              'Connection': 'keep-alive',
+              'Content-Length': '333',
+              'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+              'Cookie': 'UM_distinctid=17993bbae6f4bc-04767713025c5f-5771031-1fa400-17993bbae70d03; token=MjAyOTI2RUVDMEZGODc1NDU5NzE1OUY2NTFEMEI2NUY0RjZDNEM4NzcxRENCMkFDMkI2NDBBRTQxNDkwNDRCODgyMEYxRjhBODUyQUU4Njk4RTNERTNEQkIyRDdBQzcy; sensorsdata2015jssdkcross=%7B%22distinct_id%22%3A%22A2017072620535302484%22%2C%22first_id%22%3A%2217993bbb062580-0b2bb8ebf95e4b-5771031-2073600-17993bbb063b6c%22%2C%22props%22%3A%7B%22%24latest_traffic_source_type%22%3A%22%E7%9B%B4%E6%8E%A5%E6%B5%81%E9%87%8F%22%2C%22%24latest_search_keyword%22%3A%22%E6%9C%AA%E5%8F%96%E5%88%B0%E5%80%BC_%E7%9B%B4%E6%8E%A5%E6%89%93%E5%BC%80%22%2C%22%24latest_referrer%22%3A%22%22%7D%2C%22%24device_id%22%3A%2217993bbb062580-0b2bb8ebf95e4b-5771031-2073600-17993bbb063b6c%22%7D; CNZZDATA1275056938=2000595176-1621678674-%7C1622361743; JSESSIONID=0A02CE71EE28EBE920669067C011FDEF',
+              'Host': 'www.szwego.com',
+              'Origin': 'https://www.szwego.com',
+              'Referer': 'https://www.szwego.com/static/index.html',
+              'Sec-Fetch-Dest': 'empty',
+              'Sec-Fetch-Mode': 'cors',
+              'Sec-Fetch-Site': 'same-origin',
+              'wego-channel': 'net',
+              'wego-staging': '0',
+              'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.61 Safari/537.36',
+              'X-Requested-With': 'XMLHttpRequest'}
+    try:
+        tag2id = load_obj('tag2id')
+    except:
+        return
+    for id in tqdm(tag2id.values(),desc="deletetag"):
+        try:
+            r = post(delete_url, data='tagId='+str(id), headers=header)
+        except:
+            pass
+    tag2id = {}
+    save_obj(tag2id,'tag2id')
+    return
+
+def DeleteAllGoods():
+    delete_url =  'https://www.szwego.com/api/v1/commodity/batch/delAdapter'
+    header = {'Accept': 'application/json, text/javascript, */*;q=0.01',
+              'Accept-Encoding': 'gzip, deflate, br',
+              'Accept-Language': 'zh-CN,zh;q=0.9,en-US;q=0.8,en;q=0.7',
+              'Connection': 'keep-alive',
+              'Content-Length': '333',
+              'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+              'Cookie': 'UM_distinctid=17993bbae6f4bc-04767713025c5f-5771031-1fa400-17993bbae70d03; token=MjAyOTI2RUVDMEZGODc1NDU5NzE1OUY2NTFEMEI2NUY0RjZDNEM4NzcxRENCMkFDMkI2NDBBRTQxNDkwNDRCODgyMEYxRjhBODUyQUU4Njk4RTNERTNEQkIyRDdBQzcy; sensorsdata2015jssdkcross=%7B%22distinct_id%22%3A%22A2017072620535302484%22%2C%22first_id%22%3A%2217993bbb062580-0b2bb8ebf95e4b-5771031-2073600-17993bbb063b6c%22%2C%22props%22%3A%7B%22%24latest_traffic_source_type%22%3A%22%E7%9B%B4%E6%8E%A5%E6%B5%81%E9%87%8F%22%2C%22%24latest_search_keyword%22%3A%22%E6%9C%AA%E5%8F%96%E5%88%B0%E5%80%BC_%E7%9B%B4%E6%8E%A5%E6%89%93%E5%BC%80%22%2C%22%24latest_referrer%22%3A%22%22%7D%2C%22%24device_id%22%3A%2217993bbb062580-0b2bb8ebf95e4b-5771031-2073600-17993bbb063b6c%22%7D; CNZZDATA1275056938=2000595176-1621678674-%7C1622361743; JSESSIONID=0A02CE71EE28EBE920669067C011FDEF',
+              'Host': 'www.szwego.com',
+              'Origin': 'https://www.szwego.com',
+              'Referer': 'https://www.szwego.com/static/index.html',
+              'Sec-Fetch-Dest': 'empty',
+              'Sec-Fetch-Mode': 'cors',
+              'Sec-Fetch-Site': 'same-origin',
+              'wego-channel': 'net',
+              'wego-staging': '0',
+              'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.61 Safari/537.36',
+              'X-Requested-With': 'XMLHttpRequest'}
+    r = post(delete_url, data='search_value=&start_date=&end_date=&from_id=&del_item_list=%5B%5D&no_del_item_list=%5B%5D&tag_id=%5B%5D', headers=header)
+    # print(r.text)
+    return
 def PostMain(json_path_list = ['./data/360che_newcar.json','./data/360che_ershoucar.json','./data/13che_ershoucar.json']):
     # 流式分块取JSON 防止爆内存
     # json_path_list = ['./data/360che_ershoucar.json']
@@ -344,4 +400,5 @@ def PostMain(json_path_list = ['./data/360che_newcar.json','./data/360che_ershou
     save_obj(have_updated, 'wego_have_updated')
 
 if __name__ == "__main__":
+    # DeleteAllGoods()
     pass
