@@ -128,7 +128,7 @@ if __name__ == '__main__':
         "马力：": "105马力"
     }
 
-    GetDetailImage(img_url="https://img7.kcimg.cn/uploads/2021/427//6b473d1090d34269897c503cf97fd96c.jpg_750x500.jpg",
-                   car_info=car_info,save_path="./data/bg.jpg")
+    # GetDetailImage(img_url="https://img7.kcimg.cn/uploads/2021/427//6b473d1090d34269897c503cf97fd96c.jpg_750x500.jpg",
+    #                car_info=car_info,save_path="./data/bg.jpg")
 
 
