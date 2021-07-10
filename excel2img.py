@@ -77,11 +77,24 @@ def GetDetailImage(img_url,car_info,save_path="./data/bg.jpg"):
     except:
         pass
     # 写配置
+    setting_path = './data/配置图.txt'
+    f = open(setting_path, 'r',encoding="utf8")
+    setting_item = f.read()
+    f.close()
+    # print(setting_item)
+    setting_item = setting_item.split('\n')
+    # print(setting_item)
+
     row = 1
     for key in car_info:
         if key == "url" or key == "name" or key == "info" or key == "price" or key == "image":
             continue
         value = car_info[key]
+        if "：" in key:
+            key = key.replace("：","")
+        #如果没有设置配置图，则跳过
+        if key not in setting_item:
+            continue
         draw.text((30, 80 + (row - 1) * 40), key + ":" + value, (0, 0, 0), font=font)
         row += 1
 
@@ -114,7 +127,8 @@ if __name__ == '__main__':
         "排放标准：": "国五",
         "马力：": "105马力"
     }
-    # GetDetailImage(img_url="https://img7.kcimg.cn/uploads/2021/427//6b473d1090d34269897c503cf97fd96c.jpg_750x500.jpg",
-    #                car_info=car_info,save_path="./data/bg.jpg")
+
+    GetDetailImage(img_url="https://img7.kcimg.cn/uploads/2021/427//6b473d1090d34269897c503cf97fd96c.jpg_750x500.jpg",
+                   car_info=car_info,save_path="./data/bg.jpg")
 
 

@@ -91,7 +91,7 @@ class UpDataThread(Thread):
         #线程执行的代码
         if self.select == 0:
             #上传所有
-            json_path_list = ['./data/360che_ershoucar.json', './data/360che_newcar.json',
+            json_path_list = ['./data/360che_newcar.json','./data/360che_ershoucar.json',
                               './data/13che_ershoucar.json']
             if self.update_type == "微商相册":
                 WegoPost(json_path_list)
@@ -125,7 +125,7 @@ class UpDataThread(Thread):
 
 class Car(wx.Frame):
     def __init__(self, parent):
-        wx.Frame.__init__(self, parent, id=wx.ID_ANY, title = u"二手车采集 V1.2.0", pos=wx.DefaultPosition,
+        wx.Frame.__init__(self, parent, id=wx.ID_ANY, title = u"二手车采集 V1.2.1", pos=wx.DefaultPosition,
                           size=wx.Size(540, 200), style=wx.DEFAULT_FRAME_STYLE | wx.TAB_TRAVERSAL)
 
         self.SetSizeHints(wx.DefaultSize, wx.DefaultSize)
