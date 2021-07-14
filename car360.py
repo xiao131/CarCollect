@@ -155,6 +155,7 @@ def get_Ershou_Url(region,page_end = 1,page_strat = 1):
                     car_detail['url'] = 'https://tao.360che.com' + car['href']
                     car_detail['name'] = car.find('div',class_ = 'title').get_text().replace('\n','').strip()
                     car_detail['info'] = car.find('div',class_ = 'info').get_text().replace('\n','').strip()
+                    car_detail['info'] = '\\'.join(car_detail['info'].split('\\')[:-1])
                     car_detail['price'] = car.find('div', class_='price').get_text().replace('\n','').strip()
                     # car_detail['品牌'] = car_detail['info'].split('/')[0]
                     car_detail['datasource'] = '360-二手车'

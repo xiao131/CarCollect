@@ -101,7 +101,7 @@ def CreateTag(car):
             groupId = groups['groupId']
             # break
     # 获得所有标签的ID
-    for tags in theme_detail['result']['allTags']:
+    for tags in theme_detail['result']['currTags']:
         tag2id[tags['tagName']] = tags['tagId']
 
     # for cat in cat_set:
