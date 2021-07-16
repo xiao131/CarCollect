@@ -8,6 +8,8 @@ from urllib import error
 # from os import makedirs
 import ijson
 # from urllib.parse import quote,unquote
+import time
+import datetime
 from PIL import Image
 import pickle
 import json
@@ -214,7 +216,9 @@ def PostToGuanjiapo(goods,token = None,esn = None):
     # for goods in goods_data:
     if 'info' not in goods.keys():
         goods['info'] = goods['name']
-    info = goods['info']+quote(' ' + goods['url'].split('.com')[-1].split('.')[0])+' 参考价：'
+    t = time.time()
+    now_t = int(round(t * 1000))
+    info = goods['info']+quote(' ' + str(now_t))+' 参考价：'
     if 'price' not in goods.keys():
         info += '价格私聊'
     else:
@@ -268,6 +272,8 @@ def PostToGuanjiapo(goods,token = None,esn = None):
     # print(r.text)
     # print(r.text)
     print('上传商品成功：',goods['name'])
+    with open('./data/url.txt','a+',encoding = 'utf-8') as f:
+        f.write("{} {}\n".format(now_t,goods['url']))
     return format_dict['RetObject']['ID']
 
 def login(username):

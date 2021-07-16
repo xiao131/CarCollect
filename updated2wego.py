@@ -8,6 +8,8 @@ from urllib import error
 # from os import makedirs
 from tqdm import tqdm
 from PIL import Image
+import time
+import datetime
 
 import ijson
 from urllib.parse import quote#,unquote
@@ -194,7 +196,9 @@ def PostToWego(goods,tag2id):
               'X-Requested-With': 'XMLHttpRequest'}
     # for goods in goods_data:
     id = 'id='
-    title = '&title='+quote(goods['name'])+quote(' ' + goods['url'].split('.com')[-1].split('.')[0])+quote(' 参考价：')
+    t = time.time()
+    now_t = int(round(t * 1000))
+    title = '&title='+quote(goods['name'])+quote(' ' + str(now_t))+quote(' 参考价：')
     if 'price' not in goods.keys():
         title += quote('价格私聊')
     else:
@@ -290,6 +294,8 @@ def PostToWego(goods,tag2id):
     # print(r.text)
     # print(r.text)
     print('上传商品成功：',goods['name'])
+    with open('./data/url.txt','a+',encoding = 'utf-8') as f:
+        f.write("{} {}\n".format(now_t,goods['url']))
 
 
 def DeleteTag():
@@ -353,6 +359,7 @@ def PostMain(json_path_list = ['./data/360che_newcar.json','./data/360che_ershou
         have_updated = load_obj('wego_have_updated')
     except:
         have_updated = set()
+
     count = 1
     for json_path in json_path_list:
         with open(json_path, 'r', encoding='utf-8') as f:
