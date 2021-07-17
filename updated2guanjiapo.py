@@ -362,10 +362,16 @@ def main(json_path_list = ['./data/360che_ershoucar.json','./data/360che_newcar.
                         car['datasource'] = '13-二手车'
                         car['classid'] = '1019'
                     # print(car)
-                    try:
-                        car['label'] = car['datasource'] + '-' + car['品牌']
-                    except:
-                        continue
+                    if 'ershou' in json_path:
+                        try:
+                            car['label'] = car['datasource']+'-' + car['city']
+                        except:
+                            continue
+                    else:
+                        try:
+                            car['label'] = car['datasource']+'-'+car['品牌']
+                        except:
+                            continue
                     try:
                         post_ID = PostToGuanjiapo(car,token, esn )
                         guanjiapo_goods_id.append(str(post_ID))
