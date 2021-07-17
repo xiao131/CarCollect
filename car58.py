@@ -129,7 +129,7 @@ def getPinyin(string):
         charLst.append(single_get_first(l))
     return ''.join(charLst)
 
-def CollectSingle(car_link,Cookie):
+def CollectSingle(car_link,Cookie,city_china):
     try:
         # 单条车信息
         car_single = {}
@@ -206,6 +206,7 @@ def CollectSingle(car_link,Cookie):
         car_single["price"] = price
         car_single["image"] = img_list
         car_single["品牌"] = brand
+        car_single['city'] = city_china
 
         car_info = {}
         car_info_html = data_html.find("dl", class_="info-conf")
@@ -244,7 +245,7 @@ def Collect(city):
     url_engineer_car = "https://quanguo.58.com/cheliangmaimai/pn1/?PGTID=0d30001d-0221-8a2d-e3c0-00094d974a53&ClickID=62&template=new"
     url_truck = "https://quanguo.58.com/huochec/pn1/?PGTID=0d30001d-0221-8a2d-e3c0-00094d974a53&ClickID=54&template=new"
     url_trailer = "https://quanguo.58.com/guache/pn1/?PGTID=0d30001d-0221-8a2d-e3c0-00094d974a53&ClickID=71"
-
+    city_china = city
     if city == "全国":
         city = "quanguo"
     elif city == "重庆市":
@@ -334,7 +335,7 @@ def Collect(city):
                             Cookie = Cookie1
                         else:
                             Cookie = Cookie2
-                        tip, car_single = CollectSingle(car_link,Cookie)
+                        tip, car_single = CollectSingle(car_link,Cookie,city_china)
                         # time.sleep(10)
 
                         if tip == True:

@@ -384,10 +384,16 @@ def PostMain(json_path_list = ['./data/360che_newcar.json','./data/360che_ershou
                         car['datasource'] = '13-二手车'
 
                     # print(car)
-                    try:
-                        car['label'] = car['datasource']+'-'+car['品牌']
-                    except:
-                        continue
+                    if 'ershou' in json_path:
+                        try:
+                            car['label'] = car['datasource']+'-' + car['city']
+                        except:
+                            continue
+                    else:
+                        try:
+                            car['label'] = car['datasource']+'-'+car['品牌']
+                        except:
+                            continue
                     try:
                         tag2id = CreateTag(car)
                         PostToWego(car, tag2id)

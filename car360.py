@@ -129,7 +129,7 @@ def get_Newcar_Detail(car_list):
     print('所有信息爬取完成')
     return car_list
 
-def get_Ershou_Url(region,page_end = 1,page_strat = 1):
+def get_Ershou_Url(region,city,page_end = 1,page_strat = 1):
 
     region_url = 'https://tao.360che.com/'
     if region != '000':  # '000' 代表全国
@@ -157,6 +157,7 @@ def get_Ershou_Url(region,page_end = 1,page_strat = 1):
                     car_detail['info'] = car.find('div',class_ = 'info').get_text().replace('\n','').strip()
                     car_detail['info'] = '\\'.join(car_detail['info'].split('\\')[:-1])
                     car_detail['price'] = car.find('div', class_='price').get_text().replace('\n','').strip()
+                    car_detail['city'] = city
                     # car_detail['品牌'] = car_detail['info'].split('/')[0]
                     car_detail['datasource'] = '360-二手车'
                     ershou_car_list.append(car_detail)
@@ -282,7 +283,7 @@ def Collect(city):
                 f.write(json.dumps(car_list, indent=2, ensure_ascii=False))
             print("保存信息至：", newcar_path)
 
-            ershouche_list = get_Ershou_Url(city_code[city], page_strat=before_i, page_end=i)
+            ershouche_list = get_Ershou_Url(city_code[city], city,page_strat=before_i, page_end=i)
             ershouche_list = get_Ershou_Detail(ershouche_list)
 
             ershoucar_path = './data/360che_ershoucar.json'
