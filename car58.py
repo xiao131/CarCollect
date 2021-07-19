@@ -206,7 +206,7 @@ def CollectSingle(car_link,Cookie,city_china):
         car_single["price"] = price
         car_single["image"] = img_list
         car_single["品牌"] = brand
-        car_single['city'] = city_china
+        car_single["city"] = area
 
         car_info = {}
         car_info_html = data_html.find("dl", class_="info-conf")

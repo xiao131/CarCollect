@@ -87,7 +87,7 @@ def GetDetailImage(img_url,car_info,save_path="./data/bg.jpg"):
 
     row = 1
     for key in car_info:
-        if key == "url" or key == "name" or key == "info" or key == "price" or key == "image":
+        if key == "url" or key == "name" or key == "info" or key == "price" or key == "image" or key == "city":
             continue
         value = car_info[key]
         if "：" in key:
