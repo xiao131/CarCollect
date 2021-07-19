@@ -376,6 +376,7 @@ def PostMain(json_path_list = ['./data/360che_newcar.json','./data/360che_ershou
                         continue
                     if '360che_ershoucar' in json_path:
                         car['datasource'] = '360-二手车'
+                        car['city'] = car['info'].split('\\')[-1]
                     elif '360che_newcar' in json_path:
                         car['datasource'] = '360-新车'
                     elif '13che_newcar' in json_path:

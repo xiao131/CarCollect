@@ -352,6 +352,7 @@ def main(json_path_list = ['./data/360che_ershoucar.json','./data/360che_newcar.
                     if '360che_ershoucar' in json_path:
                         car['datasource'] = '360-二手车'
                         car['classid'] = '1017'
+                        car['city'] = car['info'].split('\\')[-1]
                     elif '360che_newcar' in json_path:
                         car['datasource'] = '360-新车'
                         car['classid'] = '1016'
