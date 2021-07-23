@@ -103,7 +103,7 @@ def CreateTag(car):
             groupId = groups['groupId']
             # break
     # 获得所有标签的ID
-    for tags in theme_detail['result']['currTags']:
+    for tags in theme_detail['result']['allTags']:
         tag2id[tags['tagName']] = tags['tagId']
 
     # for cat in cat_set:
@@ -269,6 +269,9 @@ def PostToWego(goods,tag2id):
     personalTagIds = '&personalTagIds=[]'
     sources = '&sources=[]'
     digital_watermark = '&digital_watermark='
+    # 商品简称
+    if len(goods['name']) > 16:
+        goods['name'] = goods['name'][:16]
     subTitle = '&subTitle='+quote(goods['name'])
     goodsNum = '&goodsNum='
     formats = '&formats='
@@ -290,10 +293,10 @@ def PostToWego(goods,tag2id):
     # post_goods_data = urllib.parse.unquote(post_goods_data)
 
     r = post(post_goods_url, data=post_goods_data, headers=header)
-    # format_dict = json.loads(r.text)
+    format_dict = json.loads(r.text)
     # print(r.text)
-    # print(r.text)
-    print('上传商品成功：',goods['name'])
+    print('上传商品：',goods['name'])
+    print(format_dict['errmsg'])
     with open('./data/url.txt','a+',encoding = 'utf-8') as f:
         f.write("{} {}\n".format(now_t,goods['url']))
 
