@@ -12,6 +12,7 @@ from updated2guanjiapo import main as GuanjiapoPost
 from updated2wego import DeleteTag as DeleteWegoTag
 from updated2wego import DeleteAllGoods as DeleteWegoGoods
 from updated2guanjiapo import DeleteAllGoods as DeleteGuanjiapoGoods
+import os
 
 #采集数据线程
 class CollectThread(Thread):
@@ -125,7 +126,7 @@ class UpDataThread(Thread):
 
 class Car(wx.Frame):
     def __init__(self, parent):
-        wx.Frame.__init__(self, parent, id=wx.ID_ANY, title = u"二手车采集 V1.2.1", pos=wx.DefaultPosition,
+        wx.Frame.__init__(self, parent, id=wx.ID_ANY, title = u"二手车采集 V1.2.3", pos=wx.DefaultPosition,
                           size=wx.Size(540, 200), style=wx.DEFAULT_FRAME_STYLE | wx.TAB_TRAVERSAL)
 
         self.SetSizeHints(wx.DefaultSize, wx.DefaultSize)
@@ -365,11 +366,24 @@ class Car(wx.Frame):
         self.ColseAllButton()
 
     def Delete_Wego_Goods(self,event):
+        #删除have updata 文件
+        before_path = os.getcwd()
+        print(before_path)
+        if os.path.exists(before_path+"\data\wego_have_updated.pkl"):
+            os.remove(before_path+"\data\wego_have_updated.pkl")
+            os.chdir(before_path)
         UpDataThread(4,'微商相册')
         # 将按钮设置为禁用
+
         self.ColseAllButton()
 
     def Delete_Guanjiapo_Goods(self,event):
+        # 删除have updata 文件
+        before_path = os.getcwd()
+        print(before_path)
+        if os.path.exists(before_path + "\data\guanjiapo_have_updated.pkl"):
+            os.remove(before_path + "\data\guanjiapo_have_updated.pkl")
+            os.chdir(before_path)
         UpDataThread(5,'管家婆')
         # 将按钮设置为禁用
         self.ColseAllButton()
