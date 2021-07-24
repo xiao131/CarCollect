@@ -60,7 +60,7 @@ def GetHtmlCode(url,headers):
 
 
 # 创建标签
-def CreateTag(car):
+def CreateTag(car,cookie):
     tag_url = 'https://www.szwego.com/service/album/album_theme_tag_operation.jsp?act=edit_tag'
     theme_url = 'https://www.szwego.com/service/album/album_theme_tag_operation.jsp?act=edit_group'
     header = {'Accept': 'application/json, text/javascript, */*;q=0.01',
@@ -69,7 +69,7 @@ def CreateTag(car):
               'Connection': 'keep-alive',
               'Content-Length': '26',
               'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
-              'Cookie':'UM_distinctid=173d742468b495-09573fb05fb77a-5d492f12-1fa400-173d742468c579; token=MjAyOTI2RUVDMEZGODc1NDU5NzE1OUY2NTFEMEI2NUY0RjZDNEM4NzcxRENCMkFDMkI2NDBBRTQxNDkwNDRCODgyMEYxRjhBODUyQUU4Njk4RTNERTNEQkIyRDdBQzcy; sensorsdata2015jssdkcross=%7B%22distinct_id%22%3A%22A2017072620535302484%22%2C%22first_id%22%3A%22173d74246d418b-075c01c8978eb3-5d492f12-2073600-173d74246d592a%22%2C%22props%22%3A%7B%22%24latest_traffic_source_type%22%3A%22%E7%9B%B4%E6%8E%A5%E6%B5%81%E9%87%8F%22%2C%22%24latest_search_keyword%22%3A%22%E6%9C%AA%E5%8F%96%E5%88%B0%E5%80%BC_%E7%9B%B4%E6%8E%A5%E6%89%93%E5%BC%80%22%2C%22%24latest_referrer%22%3A%22%22%7D%2C%22%24device_id%22%3A%22173d74246d418b-075c01c8978eb3-5d492f12-2073600-173d74246d592a%22%7D; CNZZDATA1275056938=1097037509-1597040283-https%253A%252F%252Fwww.wegooooo.com%252F%7C1597979109; client_type=net; JSESSIONID=6BDDACF146849B02B2B8C477A3D01E82',
+              'Cookie':cookie,
               'Host': 'www.szwego.com',
               'Origin': 'https://www.szwego.com',
               'Referer': 'https://www.szwego.com/static/index.html',
@@ -149,7 +149,7 @@ def str2value(valueStr):
 
 
 # 创建规格获得规格ID
-def CreateFormat(name):
+def CreateFormat(name,cookie):
     format_url = 'https://www.szwego.com/service/album/album_theme_format_operation.jsp?act=save_format_list'
     header = {'Accept': 'application/json, text/javascript, */*;q=0.01',
               'Accept-Encoding': 'gzip, deflate, br',
@@ -157,7 +157,7 @@ def CreateFormat(name):
               'Connection': 'keep-alive',
               'Content-Length': '26',
               'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
-              'Cookie': 'UM_distinctid=173d742468b495-09573fb05fb77a-5d492f12-1fa400-173d742468c579; token=MjAyOTI2RUVDMEZGODc1NDU5NzE1OUY2NTFEMEI2NUY0RjZDNEM4NzcxRENCMkFDMkI2NDBBRTQxNDkwNDRCODgyMEYxRjhBODUyQUU4Njk4RTNERTNEQkIyRDdBQzcy; sensorsdata2015jssdkcross=%7B%22distinct_id%22%3A%22A2017072620535302484%22%2C%22first_id%22%3A%22173d74246d418b-075c01c8978eb3-5d492f12-2073600-173d74246d592a%22%2C%22props%22%3A%7B%22%24latest_traffic_source_type%22%3A%22%E7%9B%B4%E6%8E%A5%E6%B5%81%E9%87%8F%22%2C%22%24latest_search_keyword%22%3A%22%E6%9C%AA%E5%8F%96%E5%88%B0%E5%80%BC_%E7%9B%B4%E6%8E%A5%E6%89%93%E5%BC%80%22%2C%22%24latest_referrer%22%3A%22%22%7D%2C%22%24device_id%22%3A%22173d74246d418b-075c01c8978eb3-5d492f12-2073600-173d74246d592a%22%7D; CNZZDATA1275056938=1097037509-1597040283-https%253A%252F%252Fwww.wegooooo.com%252F%7C1597979109; client_type=net; JSESSIONID=6BDDACF146849B02B2B8C477A3D01E82',
+              'Cookie': cookie,
               'Host': 'www.szwego.com',
               'Origin': 'https://www.szwego.com',
               'Referer': 'https://www.szwego.com/static/index.html',
@@ -175,7 +175,7 @@ def CreateFormat(name):
     return 0
 
 # 上传数据
-def PostToWego(goods,tag2id):
+def PostToWego(goods,tag2id,cookie):
     post_goods_url = 'https://www.szwego.com/service/album/album_theme_operation.jsp?act=save_theme'
     header = {'Accept': 'application/json, text/javascript, */*;q=0.01',
               'Accept-Encoding': 'gzip, deflate, br',
@@ -183,7 +183,7 @@ def PostToWego(goods,tag2id):
               'Connection': 'keep-alive',
               'Content-Length': '333',
               'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
-              'Cookie': 'UM_distinctid=17993bbae6f4bc-04767713025c5f-5771031-1fa400-17993bbae70d03; token=MjAyOTI2RUVDMEZGODc1NDU5NzE1OUY2NTFEMEI2NUY0RjZDNEM4NzcxRENCMkFDMkI2NDBBRTQxNDkwNDRCODgyMEYxRjhBODUyQUU4Njk4RTNERTNEQkIyRDdBQzcy; sensorsdata2015jssdkcross=%7B%22distinct_id%22%3A%22A2017072620535302484%22%2C%22first_id%22%3A%2217993bbb062580-0b2bb8ebf95e4b-5771031-2073600-17993bbb063b6c%22%2C%22props%22%3A%7B%22%24latest_traffic_source_type%22%3A%22%E7%9B%B4%E6%8E%A5%E6%B5%81%E9%87%8F%22%2C%22%24latest_search_keyword%22%3A%22%E6%9C%AA%E5%8F%96%E5%88%B0%E5%80%BC_%E7%9B%B4%E6%8E%A5%E6%89%93%E5%BC%80%22%2C%22%24latest_referrer%22%3A%22%22%7D%2C%22%24device_id%22%3A%2217993bbb062580-0b2bb8ebf95e4b-5771031-2073600-17993bbb063b6c%22%7D; CNZZDATA1275056938=2000595176-1621678674-%7C1622361743; JSESSIONID=0A02CE71EE28EBE920669067C011FDEF',
+              'Cookie': cookie,
               'Host': 'www.szwego.com',
               'Origin': 'https://www.szwego.com',
               'Referer': 'https://www.szwego.com/static/index.html',
@@ -301,7 +301,7 @@ def PostToWego(goods,tag2id):
         f.write("{} {}\n".format(now_t,goods['url']))
 
 
-def DeleteTag():
+def DeleteTag(cookie):
     delete_url = 'https://www.szwego.com/service/album/album_theme_tag_operation.jsp?act=del'
     header = {'Accept': 'application/json, text/javascript, */*;q=0.01',
               'Accept-Encoding': 'gzip, deflate, br',
@@ -309,7 +309,7 @@ def DeleteTag():
               'Connection': 'keep-alive',
               'Content-Length': '333',
               'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
-              'Cookie': 'UM_distinctid=17993bbae6f4bc-04767713025c5f-5771031-1fa400-17993bbae70d03; token=MjAyOTI2RUVDMEZGODc1NDU5NzE1OUY2NTFEMEI2NUY0RjZDNEM4NzcxRENCMkFDMkI2NDBBRTQxNDkwNDRCODgyMEYxRjhBODUyQUU4Njk4RTNERTNEQkIyRDdBQzcy; sensorsdata2015jssdkcross=%7B%22distinct_id%22%3A%22A2017072620535302484%22%2C%22first_id%22%3A%2217993bbb062580-0b2bb8ebf95e4b-5771031-2073600-17993bbb063b6c%22%2C%22props%22%3A%7B%22%24latest_traffic_source_type%22%3A%22%E7%9B%B4%E6%8E%A5%E6%B5%81%E9%87%8F%22%2C%22%24latest_search_keyword%22%3A%22%E6%9C%AA%E5%8F%96%E5%88%B0%E5%80%BC_%E7%9B%B4%E6%8E%A5%E6%89%93%E5%BC%80%22%2C%22%24latest_referrer%22%3A%22%22%7D%2C%22%24device_id%22%3A%2217993bbb062580-0b2bb8ebf95e4b-5771031-2073600-17993bbb063b6c%22%7D; CNZZDATA1275056938=2000595176-1621678674-%7C1622361743; JSESSIONID=0A02CE71EE28EBE920669067C011FDEF',
+              'Cookie': cookie,
               'Host': 'www.szwego.com',
               'Origin': 'https://www.szwego.com',
               'Referer': 'https://www.szwego.com/static/index.html',
@@ -333,7 +333,7 @@ def DeleteTag():
     save_obj(tag2id,'tag2id')
     return
 
-def DeleteAllGoods():
+def DeleteAllGoods(cookie):
     delete_url =  'https://www.szwego.com/api/v1/commodity/batch/delAdapter'
     header = {'Accept': 'application/json, text/javascript, */*;q=0.01',
               'Accept-Encoding': 'gzip, deflate, br',
@@ -341,7 +341,7 @@ def DeleteAllGoods():
               'Connection': 'keep-alive',
               'Content-Length': '333',
               'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
-              'Cookie': 'UM_distinctid=17993bbae6f4bc-04767713025c5f-5771031-1fa400-17993bbae70d03; token=MjAyOTI2RUVDMEZGODc1NDU5NzE1OUY2NTFEMEI2NUY0RjZDNEM4NzcxRENCMkFDMkI2NDBBRTQxNDkwNDRCODgyMEYxRjhBODUyQUU4Njk4RTNERTNEQkIyRDdBQzcy; sensorsdata2015jssdkcross=%7B%22distinct_id%22%3A%22A2017072620535302484%22%2C%22first_id%22%3A%2217993bbb062580-0b2bb8ebf95e4b-5771031-2073600-17993bbb063b6c%22%2C%22props%22%3A%7B%22%24latest_traffic_source_type%22%3A%22%E7%9B%B4%E6%8E%A5%E6%B5%81%E9%87%8F%22%2C%22%24latest_search_keyword%22%3A%22%E6%9C%AA%E5%8F%96%E5%88%B0%E5%80%BC_%E7%9B%B4%E6%8E%A5%E6%89%93%E5%BC%80%22%2C%22%24latest_referrer%22%3A%22%22%7D%2C%22%24device_id%22%3A%2217993bbb062580-0b2bb8ebf95e4b-5771031-2073600-17993bbb063b6c%22%7D; CNZZDATA1275056938=2000595176-1621678674-%7C1622361743; JSESSIONID=0A02CE71EE28EBE920669067C011FDEF',
+              'Cookie': cookie,
               'Host': 'www.szwego.com',
               'Origin': 'https://www.szwego.com',
               'Referer': 'https://www.szwego.com/static/index.html',
@@ -355,7 +355,7 @@ def DeleteAllGoods():
     r = post(delete_url, data='search_value=&start_date=&end_date=&from_id=&del_item_list=%5B%5D&no_del_item_list=%5B%5D&tag_id=%5B%5D', headers=header)
     # print(r.text)
     return
-def PostMain(json_path_list = ['./data/360che_newcar.json','./data/360che_ershoucar.json','./data/13che_ershoucar.json']):
+def PostMain(cookie,json_path_list = ['./data/360che_newcar.json','./data/360che_ershoucar.json','./data/13che_ershoucar.json']):
     # 流式分块取JSON 防止爆内存
     # json_path_list = ['./data/360che_ershoucar.json']
     try:
@@ -399,8 +399,8 @@ def PostMain(json_path_list = ['./data/360che_newcar.json','./data/360che_ershou
                         except:
                             continue
                     try:
-                        tag2id = CreateTag(car)
-                        PostToWego(car, tag2id)
+                        tag2id = CreateTag(car,cookie)
+                        PostToWego(car, tag2id,cookie)
 
                         have_updated.add(car['url'])
                         if count%50 == 0:

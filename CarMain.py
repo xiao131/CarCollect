@@ -80,12 +80,13 @@ class UpdatePriceThread(Thread):
 
 #上传和删除数据线程
 class UpDataThread(Thread):
-    def __init__(self,select_num,update_type):
+    def __init__(self,select_num,update_type,Wego_Cookie = None):
         #线程实例化时立即启动
         Thread.__init__(self)
         #主线程关闭
         self.select = select_num
         self.update_type = update_type
+        self.Wego_Cookie = Wego_Cookie
         self.setDaemon(True)
         self.start()
     def run(self):
@@ -95,7 +96,7 @@ class UpDataThread(Thread):
             json_path_list = ['./data/360che_newcar.json','./data/360che_ershoucar.json',
                               './data/13che_ershoucar.json']
             if self.update_type == "微商相册":
-                WegoPost(json_path_list)
+                WegoPost(self.Wego_Cookie,json_path_list)
             else:
                 GuanjiapoPost(json_path_list)
 
@@ -103,7 +104,7 @@ class UpDataThread(Thread):
             #上传卡车之家
             json_path_list = ['./data/360che_newcar.json','./data/360che_ershoucar.json']
             if self.update_type == "微商相册":
-                WegoPost(json_path_list)
+                WegoPost(self.Wego_Cookie,json_path_list)
             else:
                 GuanjiapoPost(json_path_list)
 
@@ -111,13 +112,13 @@ class UpDataThread(Thread):
             #上传58同城
             json_path_list = ['./data/13che_ershoucar.json']
             if self.update_type == "微商相册":
-                WegoPost(json_path_list)
+                WegoPost(self.Wego_Cookie,json_path_list)
             else:
                 GuanjiapoPost(json_path_list)
         elif self.select == 3:
-            DeleteWegoTag()
+            DeleteWegoTag(self.Wego_Cookie)
         elif self.select == 4:
-            DeleteWegoGoods()
+            DeleteWegoGoods(self.Wego_Cookie)
         elif self.select == 5:
             DeleteGuanjiapoGoods()
 
@@ -176,13 +177,13 @@ class Car(wx.Frame):
         bSizer5 = wx.BoxSizer(wx.HORIZONTAL)
 
         #获取微商相册账号列表
-        f = open("./data/wogo.ini","r")
+        f = open("./data/wego.ini","r")
         m_choice1Choices3 = []
         for account in f.readlines():
-            account = account.split(" ")
-            if len(account) != 2:
-                continue
-            m_choice1Choices3.append("微商相册："+account[0])
+            account = account[:11]
+            # if len(account) != 2:
+            #     continue
+            m_choice1Choices3.append("微商相册："+account)
         f.close()
         # m_choice1Choices3 = ["微商13717330034", "微商13378465583"]
         self.m_choice3 = wx.Choice(self, wx.ID_ANY, wx.DefaultPosition, wx.Size(170, -1), m_choice1Choices3, 0)
@@ -333,14 +334,24 @@ class Car(wx.Frame):
         elif select_str == "58同城":
             select_num = 2
 
-        global Wego_Account
+        # global Wego_Cookie
         wogo_select = self.m_choice3.GetStringSelection()
         Wego_Account = wogo_select[5:]
-
+        Wego_Cookie = self.check_cookie(Wego_Account)
         #上传
-        UpDataThread(select_num,"微商相册")
+        UpDataThread(select_num,"微商相册",Wego_Cookie)
         # 将按钮设置为禁用
         self.ColseAllButton()
+
+    def check_cookie(self,wego_account):
+        with open('data/wego.ini','r',encoding = 'utf-8') as f:
+            for line in f.readlines():
+                account = line[:11]
+                cookie = line[12:]
+                if wego_account == account:
+                    break
+        return cookie
+
 
     # 上传数据，到管家婆
     def UpData_Guanjiapo(self, event):
@@ -361,18 +372,25 @@ class Car(wx.Frame):
         self.ColseAllButton()
 
     def Delete_Wego_Tag(self,event):
-        UpDataThread(3,'微商相册')
+        wogo_select = self.m_choice3.GetStringSelection()
+        Wego_Account = wogo_select[5:]
+        Wego_Cookie = self.check_cookie(Wego_Account)
+        UpDataThread(3,'微商相册',Wego_Cookie)
         # 将按钮设置为禁用
         self.ColseAllButton()
 
     def Delete_Wego_Goods(self,event):
         #删除have updata 文件
         before_path = os.getcwd()
+
         print(before_path)
         if os.path.exists(before_path+"\data\wego_have_updated.pkl"):
             os.remove(before_path+"\data\wego_have_updated.pkl")
             os.chdir(before_path)
-        UpDataThread(4,'微商相册')
+        wogo_select = self.m_choice3.GetStringSelection()
+        Wego_Account = wogo_select[5:]
+        Wego_Cookie = self.check_cookie(Wego_Account)
+        UpDataThread(4,'微商相册',Wego_Cookie)
         # 将按钮设置为禁用
 
         self.ColseAllButton()
